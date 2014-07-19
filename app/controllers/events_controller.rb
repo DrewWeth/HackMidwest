@@ -12,6 +12,27 @@ class EventsController < ApplicationController
   def show
   end
 
+  # method to verify if user at event
+  def checkIn
+    if params[:id].present?
+      @events = Event.find(params[:id])
+      lat = @events.latitude
+      long = @events.longitude
+      # get location of browser from cookie
+      @lat_lng = cookies[:lat_lng].split("|")
+      distance = @events.distance_to(@lat_lng)
+
+      # for now, just show with distance
+      respond_to do |format|
+        format.html # show.html.erb
+        format.json { render json: @events }
+      end
+
+    else 
+      # no event specified, throw error
+
+    end
+  end
 
   def view
     @events = Event.find(params[:id])

@@ -1,0 +1,67 @@
+<h1>Check in to event</h1>
+
+<%- unless @lat_lng %>
+<script>
+ 
+   if (navigator.geolocation) 
+      {
+        navigator.geolocation.getCurrentPosition( TestMap, error, {maximumAge: 30000, timeout: 10000, enableHighAccuracy: true} );
+  }
+  else
+  {
+        alert("Sorry, but it looks like your browser does not support geolocation.");
+  }
+
+    var latitude = position.coords.latitude;
+    var longitude = position.coords.longitude;  
+   // alert("Your coordinates are " + position.coords.latitude + ", " + position.coords.longitude);
+    
+  document.cookie="lat_lng=" + latitude + "|" + longitude; 
+
+  function error() {
+      alert("Cannot locate user");
+  }
+</script>
+<%- end %>
+
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Desc</th>
+      <th>Start</th>
+      <th>End</th>
+      <th>Location</th>
+      <th>adress</th>
+      <th>latitude</th>
+      <th>longitude</th>
+      <th>Is public</th>
+      <th>Distance</th>
+      <th colspan="3"></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @events.each do |event| %>
+      <tr>
+        <td><%= event.name %></td>
+        <td><%= event.desc %></td>
+        <td><%= event.start %></td>
+        <td><%= event.end %></td>
+        <td><%= event.location %></td>
+        <td><%= event.address %></td>
+        <td><%= event.latitude %></td>
+        <td><%= event.longitude %></td>
+        <td><%= event.is_public %></td>
+        <td><%= event.distance %></td>
+        <td><%= link_to 'Show', event %></td>
+        <td><%= link_to 'Edit', edit_event_path(event) %></td>
+        <td><%= link_to 'Destroy', event, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<br>
+
+<%= link_to 'New Event', new_event_path %>
