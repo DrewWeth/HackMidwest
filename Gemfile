@@ -27,6 +27,7 @@ gem 'coffee-rails', '~> 4.0.0'
 gem 'devise'
 gem 'cancan'
 gem 'rolify'
+gem 'twilio-ruby', '~> 3.11'
 
 # Use jquery as the JavaScript library
 gem 'jquery-rails'

@@ -8,26 +8,28 @@
 	</head>
 	<body>
 	<div class="container">
-	<p class="notice"><%= notice %></p>
-	<p class="alert"><%= alert %></p>
+		<p class="notice"><%= notice %></p>
+		<p class="alert"><%= alert %></p>
 
-	<div style="background: rgba(114, 180, 191, .9)">
-	<%= link_to 'Home', root_path %>
-	<% if user_signed_in? %>
-	<%= current_user %> |
-	<%= link_to destroy_user_session_path, destroy_user_session_path, :method => :delete %>
-	</div>
+		<div style="background: rgb(190, 114, 191);">
+			<%= Time.now %>
+		</div>
 
-	<% else %>
-	<%= link_to 'Login', new_user_session_path %>
+		<div style="background: rgba(114, 180, 191, .9)">
+			<%= link_to 'Home', root_path %>
+			<% if user_signed_in? %>
+			<%= current_user %> |
+			<%= link_to destroy_user_session_path, destroy_user_session_path, :method => :delete %>
+		</div>
 
-	<% end %>
-	</div>
+		<% else %>
+			<%= link_to 'Login', new_user_session_path %>
+		<% end %>
+		</div>
 
-	<div style="background: rgba(130, 191, 114, 0.9)">
-	<%= link_to events_path, events_path %> | <%= link_to groups_path, groups_path %> | <%= link_to new_user_session_path, new_user_session_path %>
-	</div>
-
+		<div style="background: rgba(130, 191, 114, 0.9)">
+			<%= link_to events_path, events_path %> | <%= link_to groups_path, groups_path %> | <%= link_to new_user_session_path, new_user_session_path %>
+		</div>
 
 	<%= yield %>
 

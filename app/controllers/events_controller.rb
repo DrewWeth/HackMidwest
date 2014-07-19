@@ -29,10 +29,30 @@ class EventsController < ApplicationController
   # POST /events
   # POST /events.json
   def create
+
+    require 'twilio-ruby'
+
     @event = Event.new(event_params)
 
     respond_to do |format|
       if @event.save
+
+        puts "Twilio authentication"
+        account_sid = 'AC29e7b96239c5f0bfc6ab8b724e263f30'
+        auth_token = 'e9befab8a2ea884e92db21709fe073e1'
+
+        begin
+          @client = Twilio::REST::Client.new account_sid, auth_token
+        rescue Twilio::RESR::RequestError => e
+          puts e.message
+        end
+
+        @client.account.messages.create(
+            :from => '+13147363270',
+            :to => '+13147759588',
+            :body => 'Test'
+        )    
+
         format.html { redirect_to @event, notice: 'Event was successfully created.' }
         format.json { render :show, status: :created, location: @event }
       else
