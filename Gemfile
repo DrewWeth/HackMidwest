@@ -6,8 +6,6 @@ gem 'rails', '4.1.4'
 
 gem 'execjs'
 
-gem 'therubyracer'
-
 gem 'geocoder'
 
 group :development, :test do
@@ -19,6 +17,7 @@ end
 group :production do
   # Postgres for heroku
   gem 'pg'
+  gem 'therubyracer'
 end
 
 # Use SCSS for stylesheets
