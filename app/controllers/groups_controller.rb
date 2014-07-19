@@ -21,6 +21,14 @@ class GroupsController < ApplicationController
   def edit
   end
 
+  def notify_all
+    Group.find(params(:id))
+    members = Group.members
+    
+
+  end
+
+
   # POST /groups
   # POST /groups.json
   def create
