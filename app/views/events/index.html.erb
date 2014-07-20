@@ -43,6 +43,7 @@
 <br>
 
 <%= link_to 'New Event', new_event_path %>
+
 <div id="map-canvas"/>
 
 <script type="text/javascript">
@@ -50,28 +51,7 @@
   var map;
 
   var infobox;
-
-  var content_user_marker_info_window = '<div id="content">'+
-  '<div id="siteNotice">'+
-  '</div>'+
-  '<h1 id="firstHeading" class="firstHeading">Uluru</h1>'+
-  '<div id="bodyContent">'+
-  '<p><b>Uluru</b>, also referred to as <b>Ayers Rock</b>, is a large ' +
-  'sandstone rock formation in the southern part of the '+
-  'Northern Territory, central Australia. It lies 335&#160;km (208&#160;mi) '+
-  'south west of the nearest large town, Alice Springs; 450&#160;km '+
-  '(280&#160;mi) by road. Kata Tjuta and Uluru are the two major '+
-  'features of the Uluru - Kata Tjuta National Park. Uluru is '+
-  'sacred to the Pitjantjatjara and Yankunytjatjara, the '+
-  'Aboriginal people of the area. It has many springs, waterholes, '+
-  'rock caves and ancient paintings. Uluru is listed as a World '+
-  'Heritage Site.</p>'+
-  '<p>Attribution: Uluru, <a href="http://en.wikipedia.org/w/index.php?title=Uluru&oldid=297882194">'+
-  'http://en.wikipedia.org/w/index.php?title=Uluru</a> '+
-  '(last visited June 22, 2009).</p>'+
-  '<button id="button_from_infowindow" onclick="buttonSelected()">Submit</button>' + 
-  '</div>'+
-  '</div>';
+  var events;
 
   // initialize the map
   function initialize() {
@@ -100,6 +80,11 @@
     }
   }
 
+  function updateMapWithEvents(data){
+    console.log("Event data");
+    console.log(data);
+  }
+
   function SetUserLocation(position) {
     var latitude = position.coords.latitude;
     var longitude = position.coords.longitude;
@@ -126,23 +111,72 @@
     //set up the map
     map = new google.maps.Map(document.getElementById('map-canvas'),
       mapOptions);
-      
+
+    /* SETUP USER LOCATION */
+
     //associate the marker with the map
     user_location_marker.setMap(map);
 
-    var infowindow = new google.maps.InfoWindow({
-        content: content_user_marker_info_window
-    });
-
     //add a listener on the user_location_marker and link animation with it
     google.maps.event.addListener(user_location_marker, 'click', function(){
-      infowindow.open(map, this);
-      map.panTo(myLatlng);
-      userLocationMarkerClicked();
+      panAndZoomToLocation(myLatlng, 19);
     });
 
-    //draw a circle around the latitude and longitude
-    drawCircle(myLatlng);
+    /* SETUP EVENTS MARKERS */
+
+    // loop through each event
+    for (var index in events){
+        
+      var a_event = events[index];
+
+      //ccreate the event window for this event
+      a_event.infoWindow = new google.maps.InfoWindow({
+          content: generateEventInfoWindow(a_event)
+      });
+
+      //create the latitude and longitute object
+      a_event.latLng = new google.maps.LatLng(a_event.latitude,a_event.longitude);
+
+      //create the marker for the event
+      a_event.marker = new google.maps.Marker({
+        position: a_event.latLng,
+        animation: google.maps.Animation.DROP,
+        clickable: true,
+        title: a_event.name
+      });
+    
+      //add a listener on the user_location_marker and link animation with it
+      google.maps.event.addListener(a_event.marker, 'click', function(){
+        a_event.infoWindow.open(map, this);
+        panAndZoomToLocation(a_event.latLng, 19);
+      });
+
+      //add the marker to the map
+      a_event.marker.setMap(map);
+
+      //draw a circle around the latitude and longitude
+      drawCircle(a_event.latLng);
+    }
+  }
+
+  function panAndZoomToLocation(latLng, zoomLevel){
+    map.panTo(latLng);
+    map.setZoom(zoomLevel);
+  }
+
+  function generateEventInfoWindow(a_event){
+    var info = '<div id="content">'+
+        '<div id="siteNotice">'+
+        '</div>'+
+        '<h1 id="firstHeading" class="firstHeading">' + a_event.name + '</h1>'+
+        '<div id="bodyContent">'+
+        '<p><b>Description: </b>' + a_event.desc + '</p>' + 
+        '<p><b>Start Date/Time: </b> ' + a_event.start + '</p>' + 
+        '<p><b>End Date/Time: </b> ' + a_event.end + '</p>' + 
+        '</div>'+
+        '</div>';
+    // modify this to use the data from the object
+    return info;
   }
 
   function drawCircle(latLong){
@@ -161,11 +195,6 @@
     var eventCircle = new google.maps.Circle(eventRadiusOptions);
   }
 
-  //called when the user clicks on their marker
-  function userLocationMarkerClicked(){
-    console.log("userLocationMarkerClicked called");
-  }
-
   function error() {
     alert("Cannot locate user");
   }
@@ -174,6 +203,18 @@
     console.log("Button selected!!!");
   }
 
-  // load the map asynchronously
-  window.onload = loadScript;
+  // A $( document ).ready() block.
+  $( document ).ready(function() {
+      $.ajax({
+          url: "http://localhost:3000/events",
+        dataType: "json",
+        type: "GET",
+        processData: false,
+        contentType: "application/json"
+      }).done(function(data) {
+        console.log(data);
+        events = data;
+        loadScript();
+      });
+  });
 </script>
