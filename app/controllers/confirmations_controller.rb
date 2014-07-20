@@ -25,23 +25,22 @@ class ConfirmationsController < ApplicationController
   # POST /confirmations.json
   def create
 
-
-
     @confirmation = Confirmation.new(confirmation_params)
 
-    @lat_lng = cookies[:lat_lng].split("|")
+    @user_lat_lng = cookies[:user_lat_lng].split("|")
     puts "LOOOOOK AT MEEEE!!!"
-    puts @lat_lng
+    puts @user_lat_lng
 
     #puts @confirmation.event_id
 
     e = Event.find(@confirmation.event_id)
     #puts e.address
 
-    distance = e.distance_to(@lat_lng)
+    distance = e.distance_to(@user_lat_lng)
     puts distance
 
     if ( distance < 0.1 )
+      flash[:message] = "You have successfully checked in!"
       respond_to do |format|
         if @confirmation.save
           format.html { redirect_to @confirmation, notice: 'Confirmation was successfully created.' }
@@ -52,6 +51,7 @@ class ConfirmationsController < ApplicationController
         end
       end
     else 
+      flash[:message] = "You are too far to check in! Distance:" << distance.to_s << " miles"
       respond_to do |format|
         format.html { render :new }
         format.json { render json: @confirmation.errors, status: :unprocessable_entity }

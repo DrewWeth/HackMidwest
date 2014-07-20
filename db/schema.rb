@@ -13,15 +13,6 @@
 
 ActiveRecord::Schema.define(version: 20140720010917) do
 
-  create_table "confirmations", force: true do |t|
-    t.datetime "created_at"
-    t.datetime "updated_at"
-    t.integer  "event_id"
-    t.integer  "user_id"
-  end
-
-ActiveRecord::Schema.define(version: 20140719235625) do
-
   create_table "alerts", force: true do |t|
     t.integer  "event_id"
     t.datetime "send_datetime"
@@ -30,7 +21,13 @@ ActiveRecord::Schema.define(version: 20140719235625) do
     t.datetime "updated_at"
     t.string   "body"
   end
-ActiveRecord::Schema.define(version: 20140719213308) do
+
+  create_table "confirmations", force: true do |t|
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.integer  "event_id"
+    t.integer  "user_id"
+  end
 
   create_table "events", force: true do |t|
     t.string   "name"
