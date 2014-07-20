@@ -1,0 +1,27 @@
+<%= form_for(@confirmation) do |f| %>
+  <% if @confirmation.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@confirmation.errors.count, "error") %> prohibited this confirmation from being saved:</h2>
+
+      <ul>
+      <% @confirmation.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="field">
+    <%= f.label :user_id %><br>
+    <%= f.text_field :user_id %>
+  </div>
+
+  <div class="field">
+    <%= f.label :event_id %><br>
+    <%= f.text_field :event_id %>
+  </div>
+
+  <div class="actions">
+    <%= f.submit %>
+  </div>
+<% end %>

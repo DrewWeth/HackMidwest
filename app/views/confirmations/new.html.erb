@@ -1,0 +1,37 @@
+<h1>New confirmation</h1>
+
+<%= render 'form' %>
+
+<%= link_to 'Back', confirmations_path %>
+
+<%- unless @lat_lng %>
+<script>
+  TestGeo();
+
+	function TestGeo()
+	    {
+	         if (navigator.geolocation) 
+	            {
+	              navigator.geolocation.getCurrentPosition( TestMap, error, {maximumAge: 30000, timeout: 10000, enableHighAccuracy: true} );
+	        }
+	        else
+	        {
+	              alert("Sorry, but it looks like your browser does not support geolocation.");
+	        }
+	    }
+
+	function TestMap(position) {
+		var latitude = position.coords.latitude;
+		var longitude = position.coords.longitude;  
+		//alert("Your coordinates are " + position.coords.latitude + ", " + position.coords.longitude);
+		// log to cookie
+		document.cookie="lat_long=" + position.coords.latitude + "|" + position.coords.longitude;
+		}
+		
+		
+	function error() {
+			alert("Cannot locate user");
+			}
+
+</script>
+<%- end %>
