@@ -1,3 +1,6 @@
+<style type="text/css">
+      #map-canvas { height: 100% }
+    </style>
 <h1>Listing events</h1>
 
 <table>
@@ -39,3 +42,137 @@
 <br>
 
 <%= link_to 'New Event', new_event_path %>
+<div id="map-canvas"/>
+
+<script type="text/javascript">
+  var marker;
+  var map;
+
+  var infobox;
+
+  var content_user_marker_info_window = '<div id="content">'+
+  '<div id="siteNotice">'+
+  '</div>'+
+  '<h1 id="firstHeading" class="firstHeading">Uluru</h1>'+
+  '<div id="bodyContent">'+
+  '<p><b>Uluru</b>, also referred to as <b>Ayers Rock</b>, is a large ' +
+  'sandstone rock formation in the southern part of the '+
+  'Northern Territory, central Australia. It lies 335&#160;km (208&#160;mi) '+
+  'south west of the nearest large town, Alice Springs; 450&#160;km '+
+  '(280&#160;mi) by road. Kata Tjuta and Uluru are the two major '+
+  'features of the Uluru - Kata Tjuta National Park. Uluru is '+
+  'sacred to the Pitjantjatjara and Yankunytjatjara, the '+
+  'Aboriginal people of the area. It has many springs, waterholes, '+
+  'rock caves and ancient paintings. Uluru is listed as a World '+
+  'Heritage Site.</p>'+
+  '<p>Attribution: Uluru, <a href="http://en.wikipedia.org/w/index.php?title=Uluru&oldid=297882194">'+
+  'http://en.wikipedia.org/w/index.php?title=Uluru</a> '+
+  '(last visited June 22, 2009).</p>'+
+  '<button id="button_from_infowindow" onclick="buttonSelected()">Submit</button>' + 
+  '</div>'+
+  '</div>';
+
+  // initialize the map
+  function initialize() {
+    // set the user's location
+    askForUserLocation();
+  }
+  
+  // script that is called after the dom loads so we can load the app.
+  function loadScript() {
+    var script = document.createElement('script');
+    script.type = 'text/javascript';
+    script.src = 'https://maps.googleapis.com/maps/api/js?v=3.exp&' +
+      'callback=initialize'; //this is the callback function 
+    document.body.appendChild(script);
+  }
+
+  function askForUserLocation()
+  {
+    if (navigator.geolocation) 
+    {
+      navigator.geolocation.getCurrentPosition(SetUserLocation, error, {maximumAge: 30000, timeout: 10000, enableHighAccuracy: true} );
+    }
+    else
+    {
+      alert("Sorry, but it looks like your browser does not support geolocation.");
+    }
+  }
+
+  function SetUserLocation(position) {
+    var latitude = position.coords.latitude;
+    var longitude = position.coords.longitude;
+
+    //alert("Your coordinates are " + position.coords.latitude + ", " + position.coords.longitude);
+
+    //create a marker
+    var myLatlng = new google.maps.LatLng(latitude,longitude);
+    
+    //create a new marker
+    var user_location_marker = new google.maps.Marker({
+      position: myLatlng,
+      animation: google.maps.Animation.DROP,
+      clickable:true,
+      title:"Your location"
+    });
+
+        // setup the map options
+    var mapOptions = {
+      zoom: 19,
+      center: new google.maps.LatLng(latitude, longitude)
+    };
+    
+    //set up the map
+    map = new google.maps.Map(document.getElementById('map-canvas'),
+      mapOptions);
+      
+    //associate the marker with the map
+    user_location_marker.setMap(map);
+
+    var infowindow = new google.maps.InfoWindow({
+        content: content_user_marker_info_window
+    });
+
+    //add a listener on the user_location_marker and link animation with it
+    google.maps.event.addListener(user_location_marker, 'click', function(){
+      infowindow.open(map, this);
+      map.panTo(myLatlng);
+      userLocationMarkerClicked();
+    });
+
+    //draw a circle around the latitude and longitude
+    drawCircle(myLatlng);
+  }
+
+  function drawCircle(latLong){
+    var eventRadiusOptions = {
+      strokeColor: '#00bdf5',
+      strokeOpacity: 0.8,
+      strokeWeight: 1,
+      fillColor: '#19a9e0',
+      fillOpacity: 0.35,
+      map: map,
+      center: latLong,
+      radius: 30
+    };
+
+    // Add the circle for this city to the map.
+    var eventCircle = new google.maps.Circle(eventRadiusOptions);
+  }
+
+  //called when the user clicks on their marker
+  function userLocationMarkerClicked(){
+    console.log("userLocationMarkerClicked called");
+  }
+
+  function error() {
+    alert("Cannot locate user");
+  }
+
+  function buttonSelected(){
+    console.log("Button selected!!!");
+  }
+
+  // load the map asynchronously
+  window.onload = loadScript;
+</script>
