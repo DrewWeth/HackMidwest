@@ -1,0 +1,11 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  event_id: 
+  send_datetime: 2014-07-19 16:19:13
+  is_sent: false
+
+two:
+  event_id: 
+  send_datetime: 2014-07-19 16:19:13
+  is_sent: false
