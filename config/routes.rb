@@ -8,7 +8,7 @@ Rails.application.routes.draw do
 
   devise_for :users
   
-  root to: "groups#index"
+  root to: "home#index"
 
   get 'groups/join/:id', to: 'groups#join'
   get 'groups/:id/alert', to: 'groups#alert'
