@@ -39,7 +39,7 @@ class ConfirmationsController < ApplicationController
     distance = e.distance_to(@user_lat_lng)
     puts distance
 
-    if ( distance < 0.1 )
+    if ( distance < 0.5 )
       flash[:message] = "You have successfully checked in!"
       respond_to do |format|
         if @confirmation.save
