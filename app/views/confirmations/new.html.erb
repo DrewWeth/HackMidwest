@@ -20,6 +20,20 @@
 <script>
   TestGeo();
 
+  //set the inputs on the form's values to the GET data
+  var URL = window.location.href;
+  var user_id = URL.substring(URL.indexOf("user_id="), URL.indexOf("&"));
+  //console.log(user_id);
+  user_id = user_id.substring(8);
+  var event_id = URL.substring(URL.indexOf("event_id="));
+  //console.log(event_id);
+  event_id = event_id.substring(9);
+  //console.log(user_id);
+  //console.log(event_id);
+  $('#confirmation_user_id').val(user_id);
+  $('#confirmation_event_id').val(event_id);
+  console.log($('#confirmation_user_id').val());
+  console.log($('#confirmation_event_id').val());
 	function TestGeo()
 	    {
 	         if (navigator.geolocation) 

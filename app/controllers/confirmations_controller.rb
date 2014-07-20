@@ -27,7 +27,7 @@ class ConfirmationsController < ApplicationController
 
     @confirmation = Confirmation.new(confirmation_params)
 
-    @user_lat_lng = cookies[:user_lat_lng].split("|")
+    @user_lat_lng = cookies[:user_lat_long].split("|")
     puts "LOOOOOK AT MEEEE!!!"
     puts @user_lat_lng
 

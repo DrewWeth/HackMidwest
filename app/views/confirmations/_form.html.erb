@@ -11,7 +11,17 @@
     </div>
   <% end %>
 
+  <div class="field" style="display:none;" >
+    <%= f.label :user_id %><br>
+    <%= f.text_field :user_id %>
+  </div>
+
+  <div class="field" style="display:none;" >
+    <%= f.label :event_id %><br>
+    <%= f.text_field :event_id %>
+  </div>
+
   <div class="actions">
-    <%= f.submit "Check in" %>
+    <%= f.submit %>
   </div>
 <% end %>
