@@ -8,7 +8,7 @@ gem 'execjs'
 
 gem 'geocoder'
 
- 
+
 
 group :development, :test do
   # Use sqlite3 as the database for Active Record

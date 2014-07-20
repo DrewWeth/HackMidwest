@@ -1,4 +1,10 @@
-<h1>New confirmation</h1>
+<h1>
+	<%= if params[:event_id].present?
+			e = Event.find(params[:event_id])
+			e[:name]
+		end 
+	%>	Check in
+</h1>
 
 <% if params[:event_id].present?
 		#puts "************************** EVENT ID "<< params[:event_id].to_s
