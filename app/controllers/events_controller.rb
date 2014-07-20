@@ -4,17 +4,61 @@ class EventsController < ApplicationController
   # GET /events
   # GET /events.json
   def index
-    @events = Event.all
+    if params[:id] != nil
+      @events = Event.all.where(group_id: params[:id])
+    else
+      @events = Event.all
+    end
+  end
+
+
+  def SendAlerts
+    @events = Event.find(params[:id])
+
+    curr_time = Time.now
+    @unsent_alerts = @events.alerts.where(['send_datetime < ?', DateTime.now])
+    
+    if @unsent_alerts != nil
+      require 'twilio-ruby'
+
+      puts "Twilio authentication"
+      account_sid = 'AC29e7b96239c5f0bfc6ab8b724e263f30'
+      auth_token = 'e9befab8a2ea884e92db21709fe073e1'
+      
+      begin
+        @client = Twilio::REST::Client.new account_sid, auth_token
+      rescue Twilio::RESR::RequestError => e
+        puts e.message
+      end
+
+      @unsent_alerts.each do |u|
+        if u.is_sent == nil
+          @client.account.messages.create(
+            :from => '+13147363270',
+            :to => '+13147759588',
+            :body => u.body
+            )
+          u.is_sent = true
+          u.save
+        end
+      end
+    end
   end
 
   # GET /events/1
   # GET /events/1.json
   def show
+    @events = Event.find(params[:id])
+
+    curr_time = Time.now
+    @unsent_alerts = @events.alerts.where(['send_datetime < ?', DateTime.now])
+    
   end
 
 
   def view
-    @events = Event.find(params[:id])
+
+
   end
 
   # GET /events/new
@@ -30,28 +74,16 @@ class EventsController < ApplicationController
   # POST /events.json
   def create
 
-    require 'twilio-ruby'
-
     @event = Event.new(event_params)
 
     respond_to do |format|
       if @event.save
 
-        puts "Twilio authentication"
-        account_sid = 'AC29e7b96239c5f0bfc6ab8b724e263f30'
-        auth_token = 'e9befab8a2ea884e92db21709fe073e1'
+        log = Alert.new
+        log.event_id = @event.id
+        log.send_datetime = @event.start + 1.minutes
+        log.save
 
-        begin
-          @client = Twilio::REST::Client.new account_sid, auth_token
-        rescue Twilio::RESR::RequestError => e
-          puts e.message
-        end
-
-        @client.account.messages.create(
-            :from => '+13147363270',
-            :to => '+13147759588',
-            :body => 'Test'
-        )    
 
         format.html { redirect_to @event, notice: 'Event was successfully created.' }
         format.json { render :show, status: :created, location: @event }
@@ -94,6 +126,6 @@ class EventsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def event_params
-      params.require(:event).permit(:name, :desc, :start, :end, :location, :is_public)
+      params.require(:event).permit(:name, :desc, :start, :end, :location, :is_public, :group_id)
     end
-end
+  end
