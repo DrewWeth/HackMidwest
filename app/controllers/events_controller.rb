@@ -11,8 +11,12 @@ class EventsController < ApplicationController
     else
       @events = Event.all
     end
-  end
 
+    respond_to do |format|
+      format.html # show.html.erb
+      format.json { render json: @events }
+    end
+  end
 
   # GET /events/1
   # GET /events/1.json

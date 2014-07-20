@@ -1,0 +1,27 @@
+<h1>Listing confirmations</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>User ID</th>
+      <th>EVent ID</th>
+      <th colspan="3"></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @confirmations.each do |confirmation| %>
+      <tr>
+        <td><%= confirmation.user_id %></td>
+        <td><%= confirmation.event_id %></td>
+        <td><%= link_to 'Show', confirmation %></td>
+        <td><%= link_to 'Edit', edit_confirmation_path(confirmation) %></td>
+        <td><%= link_to 'Destroy', confirmation, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<br>
+
+<%= link_to 'New Confirmation', new_confirmation_path %>
