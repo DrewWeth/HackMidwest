@@ -10,6 +10,8 @@ class GroupsController < ApplicationController
   # GET /groups/1
   # GET /groups/1.json
   def show
+    @events = Group.find(params[:id]).events
+
   end
 
   # GET /groups/new
@@ -22,12 +24,11 @@ class GroupsController < ApplicationController
   end
 
   def notify_all
-    Group.find(params(:id))
+    Group.find(params[:id])
     members = Group.members
     
 
   end
-
 
   # POST /groups
   # POST /groups.json

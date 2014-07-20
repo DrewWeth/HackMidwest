@@ -8,6 +8,8 @@ gem 'execjs'
 
 gem 'geocoder'
 
+ 
+
 group :development, :test do
   # Use sqlite3 as the database for Active Record
   gem 'sqlite3'
@@ -17,7 +19,7 @@ end
 group :production do
   # Postgres for heroku
   gem 'pg'
-  gem 'therubyracer'
+ gem 'therubyracer'
 end
 
 # Use SCSS for stylesheets
@@ -32,6 +34,7 @@ gem 'coffee-rails', '~> 4.0.0'
 gem 'devise'
 gem 'cancan'
 gem 'rolify'
+gem 'twilio-ruby', '~> 3.11'
 
 # Use jquery as the JavaScript library
 gem 'jquery-rails'

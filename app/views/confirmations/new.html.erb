@@ -1,0 +1,63 @@
+<h1>New confirmation</h1>
+
+<% if params[:event_id].present?
+		#puts "************************** EVENT ID "<< params[:event_id].to_s
+		e = Event.find(params[:event_id])
+		cookies['event_lat_long'] = {
+		  :value => e.latitude.to_s << "|" << e.longitude.to_s
+		}
+	end %>
+
+<% if flash[:message] %>
+    <div style="color:red" class="notice"><%= flash[:message] %></div>
+<% end %>
+
+<%= render 'form' %>
+
+<%= link_to 'Back', confirmations_path %>
+
+<%- unless @user_lat_lng %>
+<script>
+  TestGeo();
+
+  //set the inputs on the form's values to the GET data
+  var URL = window.location.href;
+  var user_id = URL.substring(URL.indexOf("user_id="), URL.indexOf("&"));
+  //console.log(user_id);
+  user_id = user_id.substring(8);
+  var event_id = URL.substring(URL.indexOf("event_id="));
+  //console.log(event_id);
+  event_id = event_id.substring(9);
+  //console.log(user_id);
+  //console.log(event_id);
+  $('#confirmation_user_id').val(user_id);
+  $('#confirmation_event_id').val(event_id);
+  console.log($('#confirmation_user_id').val());
+  console.log($('#confirmation_event_id').val());
+	function TestGeo()
+	    {
+	         if (navigator.geolocation) 
+	            {
+	              navigator.geolocation.getCurrentPosition( TestMap, error, {maximumAge: 30000, timeout: 10000, enableHighAccuracy: true} );
+	        }
+	        else
+	        {
+	              alert("Sorry, but it looks like your browser does not support geolocation.");
+	        }
+	    }
+
+	function TestMap(position) {
+		var latitude = position.coords.latitude;
+		var longitude = position.coords.longitude;  
+		//alert("Your coordinates are " + position.coords.latitude + ", " + position.coords.longitude);
+		// log to cookie
+		document.cookie="user_lat_long=" + position.coords.latitude + "|" + position.coords.longitude;
+		}
+		console.log(document.cookie);
+		
+	function error() {
+			alert("Cannot locate user");
+			}
+
+</script>
+<%- end %>
