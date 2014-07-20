@@ -55,6 +55,27 @@ class EventsController < ApplicationController
     
   end
 
+  # method to verify if user at event
+  def checkIn
+    if params[:id].present?
+      @events = Event.find(params[:id])
+      lat = @events.latitude
+      long = @events.longitude
+      # get location of browser from cookie
+      @lat_lng = cookies[:lat_lng].split("|")
+      distance = @events.distance_to(@lat_lng)
+
+      # for now, just show with distance
+      respond_to do |format|
+        format.html # show.html.erb
+        format.json { render json: @events }
+      end
+
+    else 
+      # no event specified, throw error
+
+    end
+  end
 
   def view
 
@@ -126,6 +147,7 @@ class EventsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def event_params
-      params.require(:event).permit(:name, :desc, :start, :end, :location, :is_public, :group_id)
+
+      params.require(:event).permit(:name, :desc, :start, :end, :location, :address, :latitude, :longitude, :is_public)
     end
   end

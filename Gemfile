@@ -4,15 +4,20 @@ source 'https://rubygems.org'
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem 'rails', '4.1.4'
 
+gem 'execjs'
+
+gem 'geocoder'
 
 group :development, :test do
   # Use sqlite3 as the database for Active Record
   gem 'sqlite3'
+  gem 'tzinfo-data'
 end
 
 group :production do
   # Postgres for heroku
   gem 'pg'
+  gem 'therubyracer'
 end
 
 # Use SCSS for stylesheets
@@ -53,3 +58,4 @@ gem 'spring',        group: :development
 # Use debugger
 # gem 'debugger', group: [:development, :test]
 
+gem 'rails_12factor', group: :production
