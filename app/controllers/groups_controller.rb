@@ -14,6 +14,7 @@ class GroupsController < ApplicationController
   # GET /groups/1.json
   def show
     @events = Group.find(params[:id]).events
+    
   end
 
   def join

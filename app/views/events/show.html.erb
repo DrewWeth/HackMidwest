@@ -1,6 +1,11 @@
 <p id="notice"><%= notice %></p>
 
-<h1>Event <%= @event.id %>: <%= @event.name %></h1>
+<h1>Event <%= @event.id %>: <%= @event.name %> 
+<% if @has_attended == true %>
+  <label class="label label-success">You have attended!</label>
+<% end %>
+</h1>
+
 <p>
   <strong>Name:</strong>
   <%= @event.name %>

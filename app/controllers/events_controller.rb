@@ -26,6 +26,15 @@ class EventsController < ApplicationController
     @all_alerts = @events.alerts
     @queue_alerts = @events.alerts.where.not(:is_sent => true)
 
+    @has_attended = false
+    if current_user != nil
+      confirmation_list = Confirmation.all.where(:user_id => current_user.id).where(:event_id => params[:id])
+      if confirmation_list != nil
+        @has_attended = true 
+      end
+    end
+
+
     require 'twilio-ruby'
     puts "Twilio authentication"
     account_sid = 'AC29e7b96239c5f0bfc6ab8b724e263f30'
