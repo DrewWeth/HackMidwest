@@ -1,44 +1,54 @@
 	<!DOCTYPE html>
 	<html>
 	<head>
-	  <title>HackMidwest</title>
-	  <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track' => true %>
-	  <%= javascript_include_tag 'application', 'data-turbolinks-track' => true %>
-	  <%= csrf_meta_tags %>
+		<title>HackMidwest</title>
+		<%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track' => true %>
+		<%= javascript_include_tag 'application', 'data-turbolinks-track' => true %>
+		<%= csrf_meta_tags %>
 	</head>
 	<body>
-	<div class="container">
-	<div class="row">
-	<div class="col-xsm-12">
-		<p class="notice"><%= notice %></p>
-		<p class="alert"><%= alert %></p>
+					<p class="notice"><%= notice %></p>
+					<p class="alert"><%= alert %></p>
 
-		<div style="background: rgb(190, 114, 191);">
-			<%= Time.now %>
-		</div>
+					<div style="background: rgb(189, 191, 114);">
+						<%= root_url %>
+					</div>
+					<div style="background: rgb(190, 114, 191);">
+						<%= Time.now %>
+					</div>
 
-		<div style="background: rgba(114, 180, 191, .9)">
-			<%= link_to 'Home', root_path %>
-			<% if user_signed_in? %>
-			<%= current_user %>
-			<%= link_to destroy_user_session_path, destroy_user_session_path, :method => :delete %>
-		</div>
+					<div style="background: rgba(114, 180, 191, .9)">
+						<%= link_to 'Home', root_path %>
+						<% if user_signed_in? %>
+							Phone number:: <%= current_user.phone_num %>:
+							<%= link_to current_user.id, edit_user_registration_path %>
 
-		<% else %>
-			<%= link_to 'Login', new_user_session_path %>
-		<% end %>
-		</div>
+						<% else %>
+							<%= link_to 'Login', new_user_session_path %>
+						<% end %>
+					</div>
 
-		<div style="background: rgba(130, 191, 114, 0.9)">
-			<%= link_to events_path, events_path %> <%= link_to groups_path, groups_path %> <%= link_to new_user_session_path, new_user_session_path %>
-		</div>
+				</div>
 
-	<%= yield %>
+				<div style="background: rgba(130, 191, 114, 0.9)">
+					<%= link_to events_path, events_path %> <%= link_to groups_path, groups_path %> <%= link_to new_user_session_path, new_user_session_path %>
+				</div>
+
+				<%= yield %>
+
+	<hr>
 
 
-	</div>
-	</div>
-	</div>
-	</body>
-	</html>
+<script>
+$(document).ready(function(){
+	$('*').each(function()
+	{
+		$(this).css({'background': Please.make_color()})
+
+	});
+})
+</script>
+
+</body>
+</html>
 

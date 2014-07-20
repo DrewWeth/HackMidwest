@@ -10,11 +10,12 @@
   <%= @group.desc %>
 </p>
 
+<%= link_to("Join", :controller => "groups", :action => "join", :id => params[:id]) %>
+
 <%= link_to 'Edit', edit_group_path(@group) %> |
 <%= link_to 'Back', groups_path %>
 
 <hr>
-
 
 <table>
   <thead>
@@ -25,6 +26,7 @@
       <th>End</th>
       <th>Location</th>
       <th>Is public</th>
+      <th>Group ID</th>
       <th colspan="3"></th>
     </tr>
   </thead>
@@ -34,8 +36,8 @@
       <tr>
         <td><%= event.name %></td>
         <td><%= event.desc %></td>
-        <td><%= event.start %></td>
-        <td><%= event.end %></td>
+        <td><%= event.start.strftime("%B %d, %Y at %I:%M %p"); %></td>
+        <td><%= event.end.strftime("%B %d, %Y at %I:%M %p"); %></td>
         <td><%= event.location %></td>
         <td><%= event.is_public %></td>
         <td><%= event.group_id %></td>

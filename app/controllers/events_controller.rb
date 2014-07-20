@@ -3,6 +3,8 @@ class EventsController < ApplicationController
 
   # GET /events
   # GET /events.json
+
+
   def index
     if params[:id] != nil
       @events = Event.all.where(group_id: params[:id])
@@ -12,47 +14,43 @@ class EventsController < ApplicationController
   end
 
 
-  def SendAlerts
-    @events = Event.find(params[:id])
-
-    curr_time = Time.now
-    @unsent_alerts = @events.alerts.where(['send_datetime < ?', DateTime.now])
-    
-    if @unsent_alerts != nil
-      require 'twilio-ruby'
-
-      puts "Twilio authentication"
-      account_sid = 'AC29e7b96239c5f0bfc6ab8b724e263f30'
-      auth_token = 'e9befab8a2ea884e92db21709fe073e1'
-      
-      begin
-        @client = Twilio::REST::Client.new account_sid, auth_token
-      rescue Twilio::RESR::RequestError => e
-        puts e.message
-      end
-
-      @unsent_alerts.each do |u|
-        if u.is_sent == nil
-          @client.account.messages.create(
-            :from => '+13147363270',
-            :to => '+13147759588',
-            :body => u.body
-            )
-          u.is_sent = true
-          u.save
-        end
-      end
-    end
-  end
-
   # GET /events/1
   # GET /events/1.json
   def show
     @events = Event.find(params[:id])
 
-    curr_time = Time.now
-    @unsent_alerts = @events.alerts.where(['send_datetime < ?', DateTime.now])
+    @all_alerts = @events.alerts
+    @queue_alerts = @events.alerts.where.not(:is_sent => true)
+
+    require 'twilio-ruby'
+    puts "Twilio authentication"
+    account_sid = 'AC29e7b96239c5f0bfc6ab8b724e263f30'
+    auth_token = 'e9befab8a2ea884e92db21709fe073e1'
     
+    begin
+      @client = Twilio::REST::Client.new account_sid, auth_token
+    rescue Twilio::RESR::RequestError => e
+      puts e.message
+    end
+    @queue_alerts.each do |u|
+      puts "IS IT PAST DATE???" + u.send_datetime.past?.to_s
+      if u.send_datetime.past?
+        the_event = Event.find(u.event_id)
+        the_group = Group.find(the_event.group_id)
+        list_of_nums = the_group.users
+        puts "Got here"
+        list_of_nums.each do |l|
+          mob_num = "+1" + l.phone_num.to_s
+          puts "Phone number:: " + mob_num.to_s 
+          @client.account.messages.create(
+            :from => '+13147363270',
+            :to => mob_num,
+            :body => u.body )
+          u.is_sent = true
+          u.save
+        end
+      end
+    end
   end
 
   # method to verify if user at event
@@ -99,12 +97,18 @@ class EventsController < ApplicationController
 
     respond_to do |format|
       if @event.save
-
+        
         log = Alert.new
         log.event_id = @event.id
-        log.send_datetime = @event.start + 1.minutes
-        log.save
+        log.send_datetime = @event.start
+        log.is_event_start = true
+        log.is_sent = false;
+        group_for_event = Group.find(@event.group_id)
+        url_string = root_url + "confirmations/new?user_id=" + current_user.id.to_s + "&event_id=" + @event.id.to_s
+        log.body = "!!! " + group_for_event.name + "'s event: " + @event.name + " has started!. Sign in here: " + url_string
+        
 
+        log.save
 
         format.html { redirect_to @event, notice: 'Event was successfully created.' }
         format.json { render :show, status: :created, location: @event }
@@ -148,6 +152,6 @@ class EventsController < ApplicationController
     # Never trust parameters from the scary internet, only allow the white list through.
     def event_params
 
-      params.require(:event).permit(:name, :desc, :start, :end, :location, :address, :latitude, :longitude, :is_public)
+      params.require(:event).permit(:name, :desc, :start, :end, :location, :address, :latitude, :longitude, :is_public, :group_id)
     end
   end

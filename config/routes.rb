@@ -9,6 +9,8 @@ Rails.application.routes.draw do
   
   root to: "groups#index"
 
+  get 'groups/join/:id', to: 'groups#join'
+  get 'groups/:id/alert', to: 'groups#alert'
   match 'checkIn' => 'events#checkIn', :as => 'checkIn', via: [:get, :post]
 
   # The priority is based upon order of creation: first created -> highest priority.

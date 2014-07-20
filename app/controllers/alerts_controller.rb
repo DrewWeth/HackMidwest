@@ -25,9 +25,14 @@ class AlertsController < ApplicationController
   # POST /alerts.json
   def create
     @alert = Alert.new(alert_params)
+    @alert.is_sent = false
+    event_for_alert = Event.find(@alert.event_id)
+    group_for_event = Group.find(event_for_alert.group_id)
+    @alert.body = group_for_event.name + "'s event: " + event_for_alert.name + " is happening: " + event_for_alert.start.strftime("%B %d, %Y at %I:%M %p") + "."
 
     respond_to do |format|
       if @alert.save
+        
         format.html { redirect_to @alert, notice: 'Alert was successfully created.' }
         format.json { render :show, status: :created, location: @alert }
       else
@@ -69,6 +74,6 @@ class AlertsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def alert_params
-      params.require(:alert).permit(:event_id, :send_datetime, :is_sent)
+      params.require(:alert).permit(:event_id, :send_datetime, :is_sent, :body, :group_id)
     end
 end

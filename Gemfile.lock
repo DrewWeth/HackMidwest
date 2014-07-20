@@ -115,6 +115,7 @@ GEM
       activesupport (>= 3.0)
       sprockets (~> 2.8)
     sqlite3 (1.3.9)
+    table_print (1.5.2)
     therubyracer (0.12.1)
       libv8 (~> 3.16.14.0)
       ref
@@ -159,6 +160,7 @@ DEPENDENCIES
   sdoc (~> 0.4.0)
   spring
   sqlite3
+  table_print
   therubyracer
   turbolinks
   twilio-ruby (~> 3.11)

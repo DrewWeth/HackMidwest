@@ -7,6 +7,7 @@
       <th>Send datetime</th>
       <th>Is sent</th>
       <th>Body</th>
+      <th>Is Sent</th>
       <th colspan="3"></th>
     </tr>
   </thead>
@@ -15,9 +16,11 @@
     <% @alerts.each do |alert| %>
       <tr>
         <td><%= alert.event_id %></td>
-        <td><%= alert.send_datetime %></td>
+        <td><%= alert.send_datetime.strftime("%B %d, %Y at %I:%M %p"); %></td>
         <td><%= alert.is_sent %></td>
         <td><%= alert.body %></td>
+        <td><%= alert.is_sent %></td>
+
         <td><%= link_to 'Show', alert %></td>
         <td><%= link_to 'Edit', edit_alert_path(alert) %></td>
         <td><%= link_to 'Destroy', alert, method: :delete, data: { confirm: 'Are you sure?' } %></td>

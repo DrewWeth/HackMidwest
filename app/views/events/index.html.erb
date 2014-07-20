@@ -21,8 +21,8 @@
       <tr>
         <td><%= event.name %></td>
         <td><%= event.desc %></td>
-        <td><%= event.start %></td>
-        <td><%= event.end %></td>
+        <td><%= event.start.strftime("%B %d, %Y at %I:%M %p"); %></td>
+        <td><%= event.end.strftime("%B %d, %Y at %I:%M %p"); %></td>
         <td><%= event.location %></td>
         <td><%= event.address %></td>
         <td><%= event.latitude %></td>

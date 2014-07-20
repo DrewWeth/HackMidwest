@@ -13,12 +13,12 @@
 
 <p>
   <strong>Start:</strong>
-  <%= @event.start %>
+  <%= @event.start.strftime("%B %d, %Y at %I:%M %p"); %>
 </p>
 
 <p>
   <strong>End:</strong>
-  <%= @event.end %>
+  <%= @event.end.strftime("%B %d, %Y at %I:%M %p"); %>
 </p>
 
 <p>
@@ -41,25 +41,32 @@
 <%= link_to 'Back', events_path %>
 
 
+
 <hr>
 
-<h1>Event Alerts</h1>
+
+<h1>All Alerts</h1>
 <table>
   <thead>
     <tr>
       <th>Event</th>
       <th>Send datetime</th>
       <th>Is sent</th>
+      <th>Body</th>
+      <th>is_event_start</th>
       <th colspan="3"></th>
     </tr>
   </thead>
 
   <tbody>
-  <% @unsent_alerts.each do |alert| %>
+    <% @all_alerts.each do |alert| %>
       <tr>
         <td><%= alert.event_id %></td>
-        <td><%= alert.send_datetime %></td>
+        <td><%= alert.send_datetime.strftime("%B %d, %Y at %I:%M %p"); %></td>
         <td><%= alert.is_sent %></td>
+        
+        <td><%= alert.body %></td>
+        <td><%= alert.is_event_start %>
         <td><%= link_to 'Show', alert %></td>
         <td><%= link_to 'Edit', edit_alert_path(alert) %></td>
         <td><%= link_to 'Destroy', alert, method: :delete, data: { confirm: 'Are you sure?' } %></td>
@@ -67,3 +74,7 @@
     <% end %>
   </tbody>
 </table>
+
+<hr>
+
+<%= link_to 'Make Alert', new_alert_path %>

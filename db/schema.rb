@@ -11,17 +11,17 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140719235625) do
+ActiveRecord::Schema.define(version: 20140720080130) do
 
   create_table "alerts", force: true do |t|
     t.integer  "event_id"
     t.datetime "send_datetime"
-    t.boolean  "is_sent"
+    t.boolean  "is_sent",        null: false
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string   "body"
+    t.boolean  "is_event_start"
   end
-ActiveRecord::Schema.define(version: 20140719213308) do
 
   create_table "events", force: true do |t|
     t.string   "name"
@@ -70,6 +70,7 @@ ActiveRecord::Schema.define(version: 20140719213308) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "group_id"
+    t.string   "phone_num"
   end
 
   add_index "users", ["email"], name: "index_users_on_email", unique: true
