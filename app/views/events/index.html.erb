@@ -1,12 +1,16 @@
-<fb:login-button scope="public_profile,email,user_friends" onlogin="checkLoginState();">
-</fb:login-button>
-
-<div id="status"></div>
 
 <style type="text/css">
-      #map-canvas { height: 100% }
+      #map-canvas { height: 400px; width:400px; }
     </style>
-<h1>Listing events</h1>
+<h1 style="display:inline">Listing events</h1>
+
+
+<div class="pull-right">
+  <fb:login-button scope="public_profile,email,user_friends" onlogin="checkLoginState();"></fb:login-button>
+  <div id="status"></div>
+
+</div>
+<hr>
 
 <table>
   <thead>
@@ -49,6 +53,7 @@
 
 <%= link_to 'New Event', new_event_path %>
 <div id="map-canvas"/>
+
 <script type="text/javascript">
   var marker;
   var map;
@@ -316,3 +321,4 @@
   }
 
 </script>
+
