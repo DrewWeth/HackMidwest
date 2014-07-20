@@ -1,8 +1,11 @@
+<style type="text/css">
+      #map-canvas { height: 100% }
+    </style>
 <h1>
 	<%= if params[:event_id].present?
 			e = Event.find(params[:event_id])
 			e[:name]
-		end 
+		end
 	%>	Check in
 </h1>
 
@@ -23,6 +26,7 @@
 <%= link_to 'Back', confirmations_path %>
 
 <%- unless @user_lat_lng %>
+<div id="map-canvas"/>
 <script>
   TestGeo();
 
@@ -40,17 +44,18 @@
   $('#confirmation_event_id').val(event_id);
   console.log($('#confirmation_user_id').val());
   console.log($('#confirmation_event_id').val());
+	
 	function TestGeo()
-	    {
-	         if (navigator.geolocation) 
-	            {
-	              navigator.geolocation.getCurrentPosition( TestMap, error, {maximumAge: 30000, timeout: 10000, enableHighAccuracy: true} );
-	        }
-	        else
+	{
+	     if (navigator.geolocation) 
 	        {
-	              alert("Sorry, but it looks like your browser does not support geolocation.");
-	        }
+	          navigator.geolocation.getCurrentPosition( TestMap, error, {maximumAge: 30000, timeout: 10000, enableHighAccuracy: true} );
 	    }
+	    else
+	    {
+	          alert("Sorry, but it looks like your browser does not support geolocation.");
+	    }
+	}
 
 	function TestMap(position) {
 		var latitude = position.coords.latitude;
@@ -58,9 +63,132 @@
 		//alert("Your coordinates are " + position.coords.latitude + ", " + position.coords.longitude);
 		// log to cookie
 		document.cookie="user_lat_long=" + position.coords.latitude + "|" + position.coords.longitude;
-		}
-		console.log(document.cookie);
-		
+	}
+
+	//split the cookie string
+	var array = document.cookie.split(";");
+	//split each individual string on an equal sign
+	var user_extra = array[0].split('=')[1];
+	var event_extra = array[1].split('=')[1];
+
+	//get the actuall values for the lats and longs
+	//split the user's lat and long delimited by "|"
+	var user_array = user_extra.split("|");
+	//split the lat and long of event delimited by "%7C"
+	var event_array = event_extra.split("%7C");
+
+	//store the values into an object
+	var user = {};
+	user.lat = user_array[0];
+	user.long = user_array[1];
+	a_event = {};
+	a_event.lat = event_array[0];
+	a_event.long = event_array[1];
+
+	setUpMap(user, a_event);
+
+	function setUpMap(){
+		loadScript();
+	}
+
+	  // script that is called after the dom loads so we can load the app.
+	function loadScript() {
+		var script = document.createElement('script');
+		script.type = 'text/javascript';
+		script.src = 'https://maps.googleapis.com/maps/api/js?v=3.exp&' +
+		  'callback=setUserAndEventOnMap'; //this is the callback function 
+		document.body.appendChild(script);
+	}
+
+	function setUserAndEventOnMap() {
+
+    //alert("Your coordinates are " + position.coords.latitude + ", " + position.coords.longitude);
+
+    //create markers for both the event and user
+    var userLatLng = new google.maps.LatLng(user.lat,user.long);
+    var eventLatLng = new google.maps.LatLng(a_event.lat, a_event.long);
+
+    //create a new marker
+    var user_location_marker = new google.maps.Marker({
+      position: userLatLng,
+      animation: google.maps.Animation.DROP,
+      clickable:true,
+      title:"Your location"
+    });
+
+    var event_location_marker = new google.maps.Marker({
+      position: eventLatLng,
+      animation: google.maps.Animation.DROP,
+      clickable:true,
+      title:"Event"
+    });
+
+        // setup the map options
+    var mapOptions = {
+      zoom: 18,
+      center: new google.maps.LatLng(a_event.lat, a_event.long)
+    };
+    
+    //set up the map
+    map = new google.maps.Map(document.getElementById('map-canvas'),
+      mapOptions);
+
+    /* SETUP USER LOCATION */
+
+    //associate the marker with the map
+    user_location_marker.setMap(map);
+    event_location_marker.setMap(map);
+
+    //add a listener on the user_location_marker and link animation with it
+    google.maps.event.addListener(user_location_marker, 'click', function(){
+      panAndZoomToLocation(userLatLng, 18);
+    });
+
+    //add a listener on the user_location_marker and link animation with it
+    google.maps.event.addListener(event_location_marker, 'click', function(){
+      panAndZoomToLocation(eventLatLng, 18);
+    });
+
+    //draw a cirlce around the event
+    drawCircle(eventLatLng);
+
+    //  Make an array of the LatLng's of the markers you want to show
+	adjustMapToFitAllPoints(new Array(userLatLng, eventLatLng));
+  }
+
+  function adjustMapToFitAllPoints(LatLngList){
+ 	
+	//  Create a new viewpoint bound
+	var bounds = new google.maps.LatLngBounds ();
+	//  Go through each...
+	for (var i = 0, LtLgLen = LatLngList.length; i < LtLgLen; i++) {
+	  //  And increase the bounds to take this point
+	  bounds.extend (LatLngList[i]);
+	}
+	//  Fit these bounds to the map
+	map.fitBounds (bounds);
+  }
+
+  function panAndZoomToLocation(latLng, zoomLevel){
+    map.panTo(latLng);
+    map.setZoom(zoomLevel);
+  }
+
+  function drawCircle(latLong){
+    var eventRadiusOptions = {
+      strokeColor: '#00bdf5',
+      strokeOpacity: 0.8,
+      strokeWeight: 1,
+      fillColor: '#19a9e0',
+      fillOpacity: 0.35,
+      map: map,
+      center: latLong,
+      radius: 30
+    };
+
+    // Add the circle for this city to the map.
+    var eventCircle = new google.maps.Circle(eventRadiusOptions);
+  }
 	function error() {
 			alert("Cannot locate user");
 			}
