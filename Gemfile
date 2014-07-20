@@ -8,7 +8,7 @@ gem 'execjs'
 
 gem 'geocoder'
 
-
+gem 'therubyracer'
 
 group :development, :test do
   # Use sqlite3 as the database for Active Record
@@ -19,7 +19,7 @@ end
 group :production do
   # Postgres for heroku
   gem 'pg'
- gem 'therubyracer'
+ 
 end
 
 # Use SCSS for stylesheets

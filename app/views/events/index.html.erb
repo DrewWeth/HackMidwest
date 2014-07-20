@@ -50,4 +50,271 @@
 
 <%= link_to 'New Event', new_event_path %>
 
+<script type="text/javascript">
+  var marker;
+  var map;
+  var user_location_marker;
+
+  var infobox;
+  var events;
+
+  // initialize the map
+  function initialize() {
+    // set the user's location
+    askForUserLocation();
+  }
+  
+  // script that is called after the dom loads so we can load the app.
+  function loadScript() {
+    var script = document.createElement('script');
+    script.type = 'text/javascript';
+    script.src = 'https://maps.googleapis.com/maps/api/js?v=3.exp&' +
+      'callback=initialize'; //this is the callback function 
+    document.body.appendChild(script);
+  }
+
+  function askForUserLocation()
+  {
+    if (navigator.geolocation) 
+    {
+      navigator.geolocation.getCurrentPosition(SetUserLocation, error, {maximumAge: 30000, timeout: 10000, enableHighAccuracy: true} );
+    }
+    else
+    {
+      alert("Sorry, but it looks like your browser does not support geolocation.");
+    }
+  }
+
+  function updateMapWithEvents(data){
+    console.log("Event data");
+    console.log(data);
+  }
+
+  function SetUserLocation(position) {
+    var latitude = position.coords.latitude;
+    var longitude = position.coords.longitude;
+
+    //alert("Your coordinates are " + position.coords.latitude + ", " + position.coords.longitude);
+
+    //create a marker
+    var myLatlng = new google.maps.LatLng(latitude,longitude);
+    
+    //create a new marker
+    user_location_marker = new google.maps.Marker({
+      position: myLatlng,
+      animation: google.maps.Animation.DROP,
+      clickable:true,
+      title:"Your location"
+    });
+
+        // setup the map options
+    var mapOptions = {
+      zoom: 19,
+      center: new google.maps.LatLng(latitude, longitude)
+    };
+    
+    //set up the map
+    map = new google.maps.Map(document.getElementById('map-canvas'),
+      mapOptions);
+
+    /* SETUP USER LOCATION */
+
+    //associate the marker with the map
+    user_location_marker.setMap(map);
+
+    //add a listener on the user_location_marker and link animation with it
+    google.maps.event.addListener(user_location_marker, 'click', function(){
+      panAndZoomToLocation(myLatlng, 19);
+    });
+
+    /* SETUP EVENTS MARKERS */
+
+    // loop through each event
+    for (var index in events){
+        
+      var a_event = events[index];
+
+      //ccreate the event window for this event
+      a_event.infoWindow = new google.maps.InfoWindow({
+          content: generateEventInfoWindow(a_event)
+      });
+
+      //create the latitude and longitute object
+      a_event.latLng = new google.maps.LatLng(a_event.latitude,a_event.longitude);
+
+      //create the marker for the event
+      a_event.marker = new google.maps.Marker({
+        position: a_event.latLng,
+        animation: google.maps.Animation.DROP,
+        clickable: true,
+        title: a_event.name
+      });
+    
+      //add a listener on the user_location_marker and link animation with it
+      google.maps.event.addListener(a_event.marker, 'click', function(){
+        a_event.infoWindow.open(map, this);
+        panAndZoomToLocation(a_event.latLng, 19);
+      });
+
+      //add the marker to the map
+      a_event.marker.setMap(map);
+
+      //draw a circle around the latitude and longitude
+      drawCircle(a_event.latLng);
+    }
+  }
+
+  function panAndZoomToLocation(latLng, zoomLevel){
+    map.panTo(latLng);
+    map.setZoom(zoomLevel);
+  }
+
+  function generateEventInfoWindow(a_event){
+    var info = '<div id="content">'+
+        '<div id="siteNotice">'+
+        '</div>'+
+        '<h1 id="firstHeading" class="firstHeading">' + a_event.name + '</h1>'+
+        '<div id="bodyContent">'+
+        '<p><b>Description: </b>' + a_event.desc + '</p>' + 
+        '<p><b>Start Date/Time: </b> ' + a_event.start + '</p>' + 
+        '<p><b>End Date/Time: </b> ' + a_event.end + '</p>' + 
+        '</div>'+
+        '</div>';
+    // modify this to use the data from the object
+    return info;
+  }
+
+  function drawCircle(latLong){
+    var eventRadiusOptions = {
+      strokeColor: '#00bdf5',
+      strokeOpacity: 0.8,
+      strokeWeight: 1,
+      fillColor: '#19a9e0',
+      fillOpacity: 0.35,
+      map: map,
+      center: latLong,
+      radius: 30
+    };
+
+    // Add the circle for this city to the map.
+    var eventCircle = new google.maps.Circle(eventRadiusOptions);
+  }
+
+  function error() {
+    alert("Cannot locate user");
+  }
+
+  function buttonSelected(){
+    console.log("Button selected!!!");
+  }
+
+  // A $( document ).ready() block.
+  $( document ).ready(function() {
+      $.ajax({
+        url: "http://hack-midwest-app.herokuapp.com/events",
+        dataType: "json",
+        type: "GET",
+        processData: false,
+        contentType: "application/json"
+      }).done(function(data) {
+        console.log(data);
+        events = data;
+        loadScript();
+      });
+  });
+
+  // This is called with the results from from FB.getLoginStatus().
+  function statusChangeCallback(response) {
+    console.log('statusChangeCallback');
+    console.log(response);
+    // The response object is returned with a status field that lets the
+    // app know the current login status of the person.
+    // Full docs on the response object can be found in the documentation
+    // for FB.getLoginStatus().
+    if (response.status === 'connected') {
+      // Logged into your app and Facebook.
+      testAPI();
+    } else if (response.status === 'not_authorized') {
+      // The person is logged into Facebook, but not your app.
+      document.getElementById('status').innerHTML = 'Please log ' +
+        'into this app.';
+    } else {
+      // The person is not logged into Facebook, so we're not sure if
+      // they are logged into this app or not.
+      document.getElementById('status').innerHTML = 'Please log ' +
+        'into Facebook.';
+    }
+  }
+
+  // This function is called when someone finishes with the Login
+  // Button.  See the onlogin handler attached to it in the sample
+  // code below.
+  function checkLoginState() {
+    FB.getLoginStatus(function(response) {
+      statusChangeCallback(response);
+    });
+  }
+
+  window.fbAsyncInit = function() {
+    FB.init({
+      appId      : '520943248035157',
+      cookie     : true,  // enable cookies to allow the server to access 
+                          // the session
+      xfbml      : true,  // parse social plugins on this page
+      version    : 'v2.0' // use version 2.0
+    });
+
+    // Now that we've initialized the JavaScript SDK, we call 
+    // FB.getLoginStatus().  This function gets the state of the
+    // person visiting this page and can return one of three states to
+    // the callback you provide.  They can be:
+    //
+    // 1. Logged into your app ('connected')
+    // 2. Logged into Facebook, but not your app ('not_authorized')
+    // 3. Not logged into Facebook and can't tell if they are logged into
+    //    your app or not.
+    //
+    // These three cases are handled in the callback function.
+
+    FB.getLoginStatus(function(response) {
+      statusChangeCallback(response);
+    });
+
+  };
+
+  // Load the SDK asynchronously
+  (function(d, s, id) {
+    var js, fjs = d.getElementsByTagName(s)[0];
+    if (d.getElementById(id)) return;
+    js = d.createElement(s); js.id = id;
+    js.src = "//connect.facebook.net/en_US/sdk.js";
+    fjs.parentNode.insertBefore(js, fjs);
+  }(document, 'script', 'facebook-jssdk'));
+
+  // Here we run a very simple test of the Graph API after login is
+  // successful.  See statusChangeCallback() for when this call is made.
+  function testAPI() {
+    console.log('Welcome!  Fetching your information.... ');
+    FB.api('/me', function(response) {
+      console.log('Successful login for: ' + response.name);
+      document.getElementById('status').innerHTML =
+        'Thanks for logging in, ' + response.name + '!';
+    });
+
+    /* make the API call */
+    FB.api(
+      "/me/picture",
+      function (response) {
+        if (response && !response.error) {
+          console.log(response);
+          user_location_marker.setIcon(response.data.url);
+        }else{
+          console.log("Cannot get the image of the user");
+          console.log(response);
+        }
+      }
+    );
+  }
+
+</script>
 
