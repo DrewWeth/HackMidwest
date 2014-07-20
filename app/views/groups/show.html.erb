@@ -10,8 +10,9 @@
   <%= @group.desc %>
 </p>
 
+<div class="btn btn-warning">
 <%= link_to("Join", :controller => "groups", :action => "join", :id => params[:id]) %>
-
+</div>
 <%= link_to 'Edit', edit_group_path(@group) %> |
 <%= link_to 'Back', groups_path %>
 

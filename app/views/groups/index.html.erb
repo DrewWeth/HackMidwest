@@ -1,4 +1,5 @@
-<h1>Listing groups</h1>
+<div class="col-sm-6">
+<h1>My Groups</h1>
 
 <table>
   <thead>
@@ -10,7 +11,32 @@
   </thead>
 
   <tbody>
-    <% @groups.each do |group| %>
+      <% if @mygroups != nil %>
+      <tr>
+        <td><%= @mygroups.name %></td>
+        <td><%= @mygroups.desc %></td>
+        <td><%= link_to 'Show', @mygroups %></td>
+        <td><%= link_to 'Edit', edit_group_path(@mygroups) %></td>
+        <td><%= link_to 'Destroy', @mygroups, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+</div>
+<div class="col-sm-6">
+<h1>Public Groups</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Desc</th>
+      <th colspan="3"></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @publicgroups.each do |group| %>
       <tr>
         <td><%= group.name %></td>
         <td><%= group.desc %></td>
@@ -21,6 +47,7 @@
     <% end %>
   </tbody>
 </table>
+</div>
 
 <br>
 
