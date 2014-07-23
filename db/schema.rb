@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140720080130) do
+ActiveRecord::Schema.define(version: 20140722012649) do
 
   create_table "alerts", force: true do |t|
     t.integer  "event_id"
@@ -43,6 +43,7 @@ ActiveRecord::Schema.define(version: 20140720080130) do
     t.string   "address"
     t.float    "latitude"
     t.float    "longitude"
+    t.boolean  "over"
   end
 
   create_table "groups", force: true do |t|

@@ -3,14 +3,24 @@ class ApplicationController < ActionController::Base
 
 	protected
 
-	def configure_devise_permitted_parameters
-		registration_params = [:phone_num, :email, :password, :password_confirmation]
+	helper :all do
 
-		if params[:action] == 'update'
-		  devise_parameter_sanitizer.for(:account_update) { 
-		    |u| u.permit(registration_params << :current_password)
-		  }
-		elsif params[:action] == 'create'
+		def resource_name
+			:user
+		end
+
+		def resource
+			@resource ||= User.new
+		end
+
+		def devise_mapping
+			@devise_mapping ||= Devise.mappings[:user]
+		end
+	end
+	def configure_devise_permitted_parameters
+		registration_params = [:phone_num, :password]
+
+		if params[:action] == 'create'
 		  devise_parameter_sanitizer.for(:sign_up) { 
 		    |u| u.permit(registration_params) 
 		  }

@@ -1,24 +1,28 @@
+<!-- Group / show  -->
 <p id="notice"><%= notice %></p>
+<div class="row">
+<div class="col-sm-12">
 
-<p>
-  <strong>Name:</strong>
-  <%= @group.name %>
-</p>
+<h1><%= @group.name %></h1>
+<h3><small><%= @group.desc %></small></h3>
 
-<p>
-  <strong>Desc:</strong>
-  <%= @group.desc %>
-</p>
 
-<div class="btn btn-warning">
-<%= link_to("Join", :controller => "groups", :action => "join", :id => params[:id]) %>
-</div>
+<% if current_user != nil %>
+  <%= link_to("Join", :controller => "groups", :action => "join", :id => params[:id])  %> | 
+  <%= link_to 'Create Event', new_event_path %> |
+<% end %>
+
 <%= link_to 'Edit', edit_group_path(@group) %> |
 <%= link_to 'Back', groups_path %>
 
+</div>
+<div class="col-sm-6"></div>
+</div>
 <hr>
+<div class="row">
+<div class="col-sm-12">
 
-<table>
+<table class="table table-striped">
   <thead>
     <tr>
       <th>Name</th>
@@ -50,7 +54,5 @@
     <% end %>
   </tbody>
 </table>
-
-<hr>
-
-<%= link_to new_event_path, new_event_path %>
+</div>
+</div>

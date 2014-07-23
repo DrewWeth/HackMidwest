@@ -6,12 +6,13 @@ class EventsController < ApplicationController
 
 
   def index
-    if params[:id] != nil
-      @events = Event.all.where(group_id: params[:id])
+    if current_user != nil
+      @group = Group.find(current_user.group_id)
+      
+      @events = Event.all.where(:group_id => @group.id)
     else
-      @events = Event.all
+      @events = Event.all.where(:is_public => true)
     end
-
     respond_to do |format|
       format.html # show.html.erb
       format.json { render json: @events }
@@ -42,14 +43,13 @@ class EventsController < ApplicationController
         the_event = Event.find(u.event_id)
         the_group = Group.find(the_event.group_id)
         list_of_nums = the_group.users
-        puts "Got here"
         list_of_nums.each do |l|
           mob_num = "+1" + l.phone_num.to_s
-          puts "Phone number:: " + mob_num.to_s 
-          @client.account.messages.create(
-            :from => '+13147363270',
-            :to => mob_num,
-            :body => u.body )
+          puts "phone number:: " + mob_num.to_s 
+          # @client.account.messages.create(
+          #   :from => '+13147363270',
+          #   :to => mob_num,
+          #   :body => u.body )
           u.is_sent = true
           u.save
         end
@@ -72,7 +72,6 @@ class EventsController < ApplicationController
         format.html # show.html.erb
         format.json { render json: @events }
       end
-
     else 
       # no event specified, throw error
 

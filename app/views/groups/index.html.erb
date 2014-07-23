@@ -1,7 +1,10 @@
-<div class="col-sm-6">
-<h1>My Groups</h1>
+<!-- Groups Index -->
 
-<table>
+<div class="col-sm-7">
+<h1>your groups <%= link_to 'make a group', new_group_path, {:class => "btn btn-primary"} %></h1>
+
+<% if current_user != nil and @groups.count != 0 %>
+<table class="table table-striped">
   <thead>
     <tr>
       <th>Name</th>
@@ -22,11 +25,15 @@
     <% end %>
   </tbody>
 </table>
-</div>
-<div class="col-sm-6">
-<h1>Public Groups</h1>
+<% else %>
+register to make groups, join a groups, and start making alerts.
 
-<table>
+<% end %>
+</div>
+<div class="col-sm-5">
+<h1>explore local groups</h1>
+
+<table class="table table-striped">
   <thead>
     <tr>
       <th>Name</th>
@@ -51,8 +58,6 @@
 
 <br>
 
-<%= link_to 'New Group', new_group_path %>
 
-
-<div id="map-canvas"/>
-
+<!-- <div id="map-canvas"/>
+ -->

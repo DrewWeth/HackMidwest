@@ -10,16 +10,16 @@
       </ul>
     </div>
   <% end %>
-
+  
   <div class="field">
     <%= f.label :name %><br>
-    <%= f.text_field :name %>
+    <%= f.text_field :name, :class => "form-control" %>
   </div>
   <div class="field">
     <%= f.label :desc %><br>
-    <%= f.text_field :desc %>
+    <%= f.text_field :desc, :class => "form-control" %>
   </div>
   <div class="actions">
-    <%= f.submit %>
+    <%= f.submit 'create group', :class => "form-control" %>
   </div>
 <% end %>

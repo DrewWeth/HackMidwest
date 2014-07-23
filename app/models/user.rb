@@ -1,5 +1,12 @@
 class User < ActiveRecord::Base
 	rolify
+
+
+	validates :phone_num, uniqueness: true
+	validates :phone_num, numericality: { only_integer: true }
+    validates :phone_num, length: { is: 10, message: "phone numbers must include area code and be 10 digits" }
+
+
 	belongs_to :group
 
 	# Include default devise modules. Others available are:

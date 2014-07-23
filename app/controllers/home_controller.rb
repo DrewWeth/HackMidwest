@@ -6,4 +6,7 @@ class HomeController < ApplicationController
 		@events = Event.all.count
 		@alerts = Alert.all.count
 	end
+
+	def about
+	end
 end

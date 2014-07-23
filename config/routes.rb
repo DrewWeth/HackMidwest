@@ -9,7 +9,7 @@ Rails.application.routes.draw do
   devise_for :users
   
   root to: "home#index"
-
+  get 'home/about', to: 'home#about'
   get 'groups/join/:id', to: 'groups#join'
   get 'groups/:id/alert', to: 'groups#alert'
   match 'checkIn' => 'events#checkIn', :as => 'checkIn', via: [:get, :post]

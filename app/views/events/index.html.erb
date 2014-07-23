@@ -1,62 +1,104 @@
 
-<h1 style="display:inline">Listing events</h1>
 
 
-<div class="pull-right">
-  <fb:login-button scope="public_profile,email,user_friends" onlogin="checkLoginState();"></fb:login-button>
-  <div id="status"></div>
+<div class="row">
 
-</div>
-<hr>
+  <div class="col-sm-6">
+    <h1 style="display:inline">
+      <h1>your events</h1>
 
-<table>
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Desc</th>
-      <th>Start</th>
-      <th>End</th>
-      <th>Location</th>
-      <th>adress</th>
-      <th>latitude</th>
-      <th>longitude</th>
-      <th>Is public</th>
-      <th colspan="3"></th>
-    </tr>
-  </thead>
 
-  <tbody>
-    <% @events.each do |event| %>
-      <tr>
-        <td><%= event.name %></td>
-        <td><%= event.desc %></td>
-        <td><%= event.start.strftime("%B %d, %Y at %I:%M %p"); %></td>
-        <td><%= event.end.strftime("%B %d, %Y at %I:%M %p"); %></td>
-        <td><%= event.location %></td>
-        <td><%= event.address %></td>
-        <td><%= event.latitude %></td>
-        <td><%= event.longitude %></td>
-        <td><%= event.is_public %></td>
+      <% if current_user != nil %> 
+      
+        <% if @events.count == 0 %>
+          you dont have any events planned. make an event with your group.
+        <% end %>
 
-        <td><%= link_to 'Show', event %></td>
-        <td><%= link_to 'Edit', edit_event_path(event) %></td>
-        <td><%= link_to 'Destroy', event, method: :delete, data: { confirm: 'Are you sure?' } %></td>
-      </tr>
-    <% end %>
-  </tbody>
-</table>
+      <%= link_to 'new event', new_event_path, {:class => "btn btn-primary"} %></h1>
+
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Desc</th>
+            <th>Start</th>
+            <th>End</th>
+            <th>adress</th>
+            <th colspan="3"></th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <% @events.each do |event| %>
+          <tr>
+            <td><%= event.name %></td>
+            <td><%= event.desc %></td>
+            <td><%= event.start.strftime("%B %d, %Y at %I:%M %p"); %></td>
+            <td><%= event.end.strftime("%B %d, %Y at %I:%M %p"); %></td>
+            <td><%= event.address %></td>
+
+            <td><%= link_to 'Show', event %></td>
+            <td><%= link_to 'Edit', edit_event_path(event) %></td>
+            <td><%= link_to 'Destroy', event, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+          </tr>
+          <% end %>
+        </tbody>
+      </table>
+      <% else %>
+        log in, join a group, and go to some events!
+
+      <% end %> 
+    </div>
+
+    <div class="col-sm-6">
+    <h1>local public events</h1>
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Desc</th>
+            <th>Start</th>
+            <th>End</th>
+            <th>adress</th>
+            <th colspan="3"></th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <% @events.each do |event| %>
+          <tr>
+            <td><%= event.name %></td>
+            <td><%= event.desc %></td>
+            <td><%= event.start.strftime("%B %d, %Y at %I:%M %p"); %></td>
+            <td><%= event.end.strftime("%B %d, %Y at %I:%M %p"); %></td>
+            <td><%= event.address %></td>
+
+            <td><%= link_to 'Show', event %></td>
+            <td><%= link_to 'Edit', edit_event_path(event) %></td>
+            <td><%= link_to 'Destroy', event, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+          </tr>
+          <% end %>
+        </tbody>
+      </table>
+
+    </div>
+
+  </div>
 
 <br>
+<fb:login-button scope="public_profile,email,user_friends" onlogin="checkLoginState();"></fb:login-button>
+<div id="status"></div>
 
-<%= link_to 'New Event', new_event_path %>
 
-<script type="text/javascript">
-  var marker;
-  var map;
-  var user_location_marker;
 
-  var infobox;
-  var events;
+
+  <script type="text/javascript">
+    var marker;
+    var map;
+    var user_location_marker;
+
+    var infobox;
+    var events;
 
   // initialize the map
   function initialize() {
@@ -70,29 +112,29 @@
     script.type = 'text/javascript';
     script.src = 'https://maps.googleapis.com/maps/api/js?v=3.exp&' +
       'callback=initialize'; //this is the callback function 
-    document.body.appendChild(script);
-  }
-
-  function askForUserLocation()
-  {
-    if (navigator.geolocation) 
-    {
-      navigator.geolocation.getCurrentPosition(SetUserLocation, error, {maximumAge: 30000, timeout: 10000, enableHighAccuracy: true} );
+      document.body.appendChild(script);
     }
-    else
+
+    function askForUserLocation()
     {
-      alert("Sorry, but it looks like your browser does not support geolocation.");
+      if (navigator.geolocation) 
+      {
+        navigator.geolocation.getCurrentPosition(SetUserLocation, error, {maximumAge: 30000, timeout: 10000, enableHighAccuracy: true} );
+      }
+      else
+      {
+        alert("Sorry, but it looks like your browser does not support geolocation.");
+      }
     }
-  }
 
-  function updateMapWithEvents(data){
-    console.log("Event data");
-    console.log(data);
-  }
+    function updateMapWithEvents(data){
+      console.log("Event data");
+      console.log(data);
+    }
 
-  function SetUserLocation(position) {
-    var latitude = position.coords.latitude;
-    var longitude = position.coords.longitude;
+    function SetUserLocation(position) {
+      var latitude = position.coords.latitude;
+      var longitude = position.coords.longitude;
 
     //alert("Your coordinates are " + position.coords.latitude + ", " + position.coords.longitude);
 
@@ -108,11 +150,11 @@
     });
 
         // setup the map options
-    var mapOptions = {
-      zoom: 19,
-      center: new google.maps.LatLng(latitude, longitude)
-    };
-    
+        var mapOptions = {
+          zoom: 19,
+          center: new google.maps.LatLng(latitude, longitude)
+        };
+
     //set up the map
     map = new google.maps.Map(document.getElementById('map-canvas'),
       mapOptions);
@@ -131,12 +173,12 @@
 
     // loop through each event
     for (var index in events){
-        
+
       var a_event = events[index];
 
       //ccreate the event window for this event
       a_event.infoWindow = new google.maps.InfoWindow({
-          content: generateEventInfoWindow(a_event)
+        content: generateEventInfoWindow(a_event)
       });
 
       //create the latitude and longitute object
@@ -149,7 +191,7 @@
         clickable: true,
         title: a_event.name
       });
-    
+
       //add a listener on the user_location_marker and link animation with it
       google.maps.event.addListener(a_event.marker, 'click', function(){
         a_event.infoWindow.open(map, this);
@@ -171,15 +213,15 @@
 
   function generateEventInfoWindow(a_event){
     var info = '<div id="content">'+
-        '<div id="siteNotice">'+
-        '</div>'+
-        '<h1 id="firstHeading" class="firstHeading">' + a_event.name + '</h1>'+
-        '<div id="bodyContent">'+
-        '<p><b>Description: </b>' + a_event.desc + '</p>' + 
-        '<p><b>Start Date/Time: </b> ' + a_event.start + '</p>' + 
-        '<p><b>End Date/Time: </b> ' + a_event.end + '</p>' + 
-        '</div>'+
-        '</div>';
+    '<div id="siteNotice">'+
+    '</div>'+
+    '<h1 id="firstHeading" class="firstHeading">' + a_event.name + '</h1>'+
+    '<div id="bodyContent">'+
+    '<p><b>Description: </b>' + a_event.desc + '</p>' + 
+    '<p><b>Start Date/Time: </b> ' + a_event.start + '</p>' + 
+    '<p><b>End Date/Time: </b> ' + a_event.end + '</p>' + 
+    '</div>'+
+    '</div>';
     // modify this to use the data from the object
     return info;
   }
@@ -210,17 +252,17 @@
 
   // A $( document ).ready() block.
   $( document ).ready(function() {
-      $.ajax({
-        url: "http://hack-midwest-app.herokuapp.com/events",
-        dataType: "json",
-        type: "GET",
-        processData: false,
-        contentType: "application/json"
-      }).done(function(data) {
-        console.log(data);
-        events = data;
-        loadScript();
-      });
+    $.ajax({
+      url: "http://hack-midwest-app.herokuapp.com/events",
+      dataType: "json",
+      type: "GET",
+      processData: false,
+      contentType: "application/json"
+    }).done(function(data) {
+      console.log(data);
+      events = data;
+      loadScript();
+    });
   });
 
   // This is called with the results from from FB.getLoginStatus().
@@ -237,12 +279,12 @@
     } else if (response.status === 'not_authorized') {
       // The person is logged into Facebook, but not your app.
       document.getElementById('status').innerHTML = 'Please log ' +
-        'into this app.';
+      'into this app.';
     } else {
       // The person is not logged into Facebook, so we're not sure if
       // they are logged into this app or not.
       document.getElementById('status').innerHTML = 'Please log ' +
-        'into Facebook.';
+      'into Facebook.';
     }
   }
 
@@ -298,7 +340,7 @@
     FB.api('/me', function(response) {
       console.log('Successful login for: ' + response.name);
       document.getElementById('status').innerHTML =
-        'Thanks for logging in, ' + response.name + '!';
+      'Thanks for logging in, ' + response.name + '!';
     });
 
     /* make the API call */
@@ -313,7 +355,7 @@
           console.log(response);
         }
       }
-    );
+      );
   }
 
 </script>
