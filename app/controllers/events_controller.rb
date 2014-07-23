@@ -6,9 +6,12 @@ class EventsController < ApplicationController
 
 
   def index
-    if current_user != nil and current_user.group_id != nil
-      @group = Group.find(current_user.group_id)
-      @events = Event.all.where(:group_id => @group.id).where(:over => false)
+    if current_user != nil
+      groups = User.find(current_user.id).groups
+      @events = []
+      groups.each do |g|
+        @events += g.events
+      end
       @public_events = Event.all.where(:is_public => true)
 
     else
@@ -68,10 +71,14 @@ class EventsController < ApplicationController
 
   # GET /events/new
   def new
-    if session[:group_id] == nil
-      redirect_to events_url
+    if current_user != nil
+      if session[:group_id] == nil
+        redirect_to events_url
+      else
+        @event = Event.new
+      end
     else
-      @event = Event.new
+      redirect_to new_user_session_path
     end
   end
 

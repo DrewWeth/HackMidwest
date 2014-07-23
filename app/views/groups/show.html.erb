@@ -8,7 +8,7 @@
 
 
 <% if current_user != nil %>
-  <% if current_user.group_id == params[:id] %>
+  <% if @is_member == true %>
     <%= link_to("Leave", :controller => "groups", :action => "leave", :id => params[:id]) %> |
   <% else %>
     <%= link_to("Join", :controller => "groups", :action => "join", :id => params[:id])  %> | 

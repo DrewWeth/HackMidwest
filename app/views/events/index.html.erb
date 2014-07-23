@@ -32,11 +32,9 @@
     
     <table class="table table-striped">
     <% @public_events.each do |event| %>
-    <% group = event.group %>
     <tr>
     <td>
-     <%= link_to event.name, event %> | <%= link_to group.name, group %>
-
+     <%= link_to event.name, event %>
       <small class="pull-right"><%= event.start.strftime("%B %d, %Y at %I:%M %p")  %></small>
       <br>
       |<% if !event.desc.empty? %>

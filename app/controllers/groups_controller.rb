@@ -15,15 +15,25 @@ class GroupsController < ApplicationController
   # GET /groups/1
   # GET /groups/1.json
   def show
-    @events = Group.find(params[:id]).events.where(:over => false)
+    @events = Group.find(params[:id]).events.where(:over => nil)
+    selected_group = Group.find(params[:id])
+    memberships = User.find(current_user.id).groups
+    if memberships.include?(selected_group)
+      @is_member = true
+    else
+      @is_member = false
+    end
     session[:group_id] = params[:id]
     
   end
 
   def join
     user = User.find(current_user.id)
-    user.group_id = params[:id]
-    @group = Group.find(user.group_id)
+    membership = Membership.new
+    membership.user_id = current_user.id
+    membership.group_id = params[:id]
+    membership.save
+    @group = Group.find(membership.group_id)
     respond_to do |format|
       if user.save
         format.html { redirect_to @group, notice: 'you were added to the group!' }
@@ -87,7 +97,11 @@ class GroupsController < ApplicationController
 
   # GET /groups/new
   def new
-    @group = Group.new
+    if current_user != nil
+      @group = Group.new
+    else
+      redirect_to new_user_session_path
+    end
   end
 
   # GET /groups/1/edit
