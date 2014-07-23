@@ -1,104 +1,74 @@
-
-
-
 <div class="row">
+  <div class="col-sm-6">
+    <h1>your events <%= link_to 'new event', new_event_path, {:class => "inline btn btn-primary"} %></h1>
+    <% if current_user != nil and @events.count != 0 %> 
+    <table class="table table-striped">
+    <% @events.each do |event| %>
+    <% group = event.group %>
+    <tr>
+    <td>
+     <%= link_to event.name, event %> | <%= link_to group.name, group %>
+
+      <small class="pull-right"><%= event.start.strftime("%B %d, %Y at %I:%M %p")  %></small>
+      <br>
+      |<% if !event.desc.empty? %>
+      <%= event.desc %>
+      <% else %>
+      no description
+      <% end %>
+      </td>
+      </tr>
+    <% end %>
+    </table>
+    <% else %>
+    you dont have any events planned. make an event through a group
+
+    <% end %> 
+  </div>
 
   <div class="col-sm-6">
-    <h1 style="display:inline">
-      <h1>your events</h1>
-
-
-      <% if current_user != nil %> 
-      
-        <% if @events.count == 0 %>
-          you dont have any events planned. make an event with your group.
-        <% end %>
-
-      <%= link_to 'new event', new_event_path, {:class => "btn btn-primary"} %></h1>
-
-      <table class="table table-striped">
-        <thead>
-          <tr>
-            <th>Name</th>
-            <th>Desc</th>
-            <th>Start</th>
-            <th>End</th>
-            <th>adress</th>
-            <th colspan="3"></th>
-          </tr>
-        </thead>
-
-        <tbody>
-          <% @events.each do |event| %>
-          <tr>
-            <td><%= event.name %></td>
-            <td><%= event.desc %></td>
-            <td><%= event.start.strftime("%B %d, %Y at %I:%M %p"); %></td>
-            <td><%= event.end.strftime("%B %d, %Y at %I:%M %p"); %></td>
-            <td><%= event.address %></td>
-
-            <td><%= link_to 'Show', event %></td>
-            <td><%= link_to 'Edit', edit_event_path(event) %></td>
-            <td><%= link_to 'Destroy', event, method: :delete, data: { confirm: 'Are you sure?' } %></td>
-          </tr>
-          <% end %>
-        </tbody>
-      </table>
-      <% else %>
-        log in, join a group, and go to some events!
-
-      <% end %> 
-    </div>
-
-    <div class="col-sm-6">
     <h1>local public events</h1>
-      <table class="table table-striped">
-        <thead>
-          <tr>
-            <th>Name</th>
-            <th>Desc</th>
-            <th>Start</th>
-            <th>End</th>
-            <th>adress</th>
-            <th colspan="3"></th>
-          </tr>
-        </thead>
+    <% if current_user != nil and @events.count != 0 %> 
+    
+    <table class="table table-striped">
+    <% @public_events.each do |event| %>
+    <% group = event.group %>
+    <tr>
+    <td>
+     <%= link_to event.name, event %> | <%= link_to group.name, group %>
 
-        <tbody>
-          <% @events.each do |event| %>
-          <tr>
-            <td><%= event.name %></td>
-            <td><%= event.desc %></td>
-            <td><%= event.start.strftime("%B %d, %Y at %I:%M %p"); %></td>
-            <td><%= event.end.strftime("%B %d, %Y at %I:%M %p"); %></td>
-            <td><%= event.address %></td>
-
-            <td><%= link_to 'Show', event %></td>
-            <td><%= link_to 'Edit', edit_event_path(event) %></td>
-            <td><%= link_to 'Destroy', event, method: :delete, data: { confirm: 'Are you sure?' } %></td>
-          </tr>
-          <% end %>
-        </tbody>
-      </table>
-
-    </div>
+      <small class="pull-right"><%= event.start.strftime("%B %d, %Y at %I:%M %p")  %></small>
+      <br>
+      |<% if !event.desc.empty? %>
+      <%= event.desc %>
+      <% else %>
+      no description
+      <% end %>
+      </td>
+      </tr>
+    <% end %>
+    </table>
+    <% else %>
+    no public events are planned around you
+    <% end %> 
 
   </div>
 
+</div>
 <br>
 <fb:login-button scope="public_profile,email,user_friends" onlogin="checkLoginState();"></fb:login-button>
-<div id="status"></div>
+<div id=""></div>
 
 
 
 
-  <script type="text/javascript">
-    var marker;
-    var map;
-    var user_location_marker;
+<script type="text/javascript">
+  var marker;
+  var map;
+  var user_location_marker;
 
-    var infobox;
-    var events;
+  var infobox;
+  var events;
 
   // initialize the map
   function initialize() {

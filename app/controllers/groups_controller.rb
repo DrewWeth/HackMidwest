@@ -4,7 +4,7 @@ class GroupsController < ApplicationController
   # GET /groups
   # GET /groups.json
   def index
-    if current_user != nil
+    if current_user.group_id != nil
       @mygroups = Group.find(current_user.group_id)
     end
     @publicgroups = Group.all
@@ -13,7 +13,9 @@ class GroupsController < ApplicationController
   # GET /groups/1
   # GET /groups/1.json
   def show
-    @events = Group.find(params[:id]).events
+    @events = Group.find(params[:id]).events.where(:over => false)
+    session[:group_id] = params[:id]
+    
   end
 
   def join
@@ -31,6 +33,11 @@ class GroupsController < ApplicationController
     end
   end
 
+  def leave
+    current_user.group_id = nil
+    current_user.save
+    redirect_to groups_path
+  end
 
   def alert
     if session[:page_load] != nil then
@@ -38,6 +45,7 @@ class GroupsController < ApplicationController
     else
       session[:page_load] = 0
     end
+
     @queue_alerts = Alert.all.where.not(:is_sent => true)
 
     require 'twilio-ruby'
@@ -53,16 +61,20 @@ class GroupsController < ApplicationController
     @queue_alerts.each do |u|
       if u.send_datetime.past?
         the_event = Event.find(u.event_id)
+        the_event.over = true
+        the_event.save
+
         the_group = Group.find(the_event.group_id)
+        
         list_of_nums = the_group.users
-        puts "got here"
+        
         list_of_nums.each do |l|
           mob_num = "+1" + l.phone_num.to_s
-          puts "phone number:: " + mob_num.to_s 
           # @client.account.messages.create(
           #   :from => '+13147363270',
           #   :to => mob_num,
           #   :body => u.body )
+          
           u.is_sent = true
           u.save
         end

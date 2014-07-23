@@ -6,12 +6,14 @@ class EventsController < ApplicationController
 
 
   def index
-    if current_user != nil
+    if current_user != nil and current_user.group_id != nil
       @group = Group.find(current_user.group_id)
-      
-      @events = Event.all.where(:group_id => @group.id)
+      @events = Event.all.where(:group_id => @group.id).where(:over => false)
+      @public_events = Event.all.where(:is_public => true)
+
     else
-      @events = Event.all.where(:is_public => true)
+      @events = []
+      @public_events = Event.all.where(:is_public => true)
     end
     respond_to do |format|
       format.html # show.html.erb
@@ -27,34 +29,15 @@ class EventsController < ApplicationController
     @all_alerts = @events.alerts
     @queue_alerts = @events.alerts.where.not(:is_sent => true)
 
-    require 'twilio-ruby'
-    puts "Twilio authentication"
-    account_sid = 'AC29e7b96239c5f0bfc6ab8b724e263f30'
-    auth_token = 'e9befab8a2ea884e92db21709fe073e1'
-    
-    begin
-      @client = Twilio::REST::Client.new account_sid, auth_token
-    rescue Twilio::RESR::RequestError => e
-      puts e.message
-    end
-    @queue_alerts.each do |u|
-      puts "IS IT PAST DATE???" + u.send_datetime.past?.to_s
-      if u.send_datetime.past?
-        the_event = Event.find(u.event_id)
-        the_group = Group.find(the_event.group_id)
-        list_of_nums = the_group.users
-        list_of_nums.each do |l|
-          mob_num = "+1" + l.phone_num.to_s
-          puts "phone number:: " + mob_num.to_s 
-          # @client.account.messages.create(
-          #   :from => '+13147363270',
-          #   :to => mob_num,
-          #   :body => u.body )
-          u.is_sent = true
-          u.save
-        end
+    @has_attended = false
+    if current_user != nil
+      confirmation_list = Confirmation.all.where(:user_id => current_user.id).where(:event_id => params[:id])
+      if confirmation_list != nil
+        @has_attended = true 
       end
     end
+
+
   end
 
   # method to verify if user at event
@@ -85,7 +68,11 @@ class EventsController < ApplicationController
 
   # GET /events/new
   def new
-    @event = Event.new
+    if session[:group_id] == nil
+      redirect_to events_url
+    else
+      @event = Event.new
+    end
   end
 
   # GET /events/1/edit

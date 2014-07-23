@@ -13,46 +13,31 @@
 
   <div class="field">
     <%= f.label :name %><br>
-    <%= f.text_field :name %>
+    <%= f.text_field :name, :class => "form-control" %>
   </div>
   <div class="field">
     <%= f.label :desc %><br>
-    <%= f.text_field :desc %>
+    <%= f.text_field :desc, :class => "form-control" %>
   </div>
   <div class="field">
     <%= f.label :start %><br>
-    <%= f.datetime_select :start %>
+    <%= f.date_field :start, :class => "datepicker form-control" %>
   </div>
   <div class="field">
     <%= f.label :end %><br>
-    <%= f.datetime_select :end %>
+    <%= f.date_field :end, :class => "datepicker form-control" %>
   </div>
-  <div class="field">
-    <%= f.label :location %><br>
-    <%= f.text_field :location %>
-  </div>
+  
   <div class="field">
     <%= f.label :address %><br>
-    <%= f.text_field :address %>
-  </div>
-  <div class="field">
-    <%= f.label :latitude %><br>
-    <%= f.text_field :latitude %>
-  </div>
-  <div class="field">
-    <%= f.label :longitude %><br>
-    <%= f.text_field :longitude %>
+    <%= f.text_field :address, :class => "form-control" %>
   </div>
   <div class="field">
     <%= f.label :is_public %><br>
-    <%= f.check_box :is_public %>
-  </div>
-  <div class="field">
-    <%= f.label :group_id %><br>
-    <%= f.number_field :group_id %>
+    <%= f.check_box :is_public, :class => "form-control" %>
   </div>
   
   <div class="actions">
-    <%= f.submit %>
+    <%= f.submit 'Create Event', :class => 'form-control' %>
   </div>
 <% end %>

@@ -8,7 +8,13 @@
 
 
 <% if current_user != nil %>
-  <%= link_to("Join", :controller => "groups", :action => "join", :id => params[:id])  %> | 
+  <% if current_user.group_id == params[:id] %>
+    <%= link_to("Leave", :controller => "groups", :action => "leave", :id => params[:id]) %> |
+  <% else %>
+    <%= link_to("Join", :controller => "groups", :action => "join", :id => params[:id])  %> | 
+  
+  <% end %>
+
   <%= link_to 'Create Event', new_event_path %> |
 <% end %>
 
@@ -21,7 +27,7 @@
 <hr>
 <div class="row">
 <div class="col-sm-12">
-
+<% if !@events.empty? %>
 <table class="table table-striped">
   <thead>
     <tr>
@@ -54,5 +60,8 @@
     <% end %>
   </tbody>
 </table>
+<% else %>
+no upcoming events. make one!
+<% end %>
 </div>
 </div>

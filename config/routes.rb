@@ -10,6 +10,8 @@ Rails.application.routes.draw do
   
   root to: "home#index"
   get 'home/about', to: 'home#about'
+  get 'groups/leave/:id', to: 'groups#leave'
+
   get 'groups/join/:id', to: 'groups#join'
   get 'groups/:id/alert', to: 'groups#alert'
   match 'checkIn' => 'events#checkIn', :as => 'checkIn', via: [:get, :post]
