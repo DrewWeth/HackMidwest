@@ -14,13 +14,13 @@
   </thead>
 
   <tbody>
-      <% if @mygroups != nil %>
+    <% @mygroups.each do |group| %>
       <tr>
-        <td><%= @mygroups.name %></td>
-        <td><%= @mygroups.desc %></td>
-        <td><%= link_to 'Show', @mygroups %></td>
-        <td><%= link_to 'Edit', edit_group_path(@mygroups) %></td>
-        <td><%= link_to 'Destroy', @mygroups, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+        <td><%= group.name %></td>
+        <td><%= group.desc %></td>
+        <td><%= link_to 'Show', group %></td>
+        <td><%= link_to 'Edit', edit_group_path(group) %></td>
+        <td><%= link_to 'Destroy', group, method: :delete, data: { confirm: 'Are you sure?' } %></td>
       </tr>
     <% end %>
   </tbody>

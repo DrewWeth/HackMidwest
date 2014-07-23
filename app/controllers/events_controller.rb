@@ -84,7 +84,7 @@ class EventsController < ApplicationController
   def create
 
     @event = Event.new(event_params)
-
+    @event.group_id = session[:group_id]
     respond_to do |format|
       if @event.save
         

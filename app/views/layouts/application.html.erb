@@ -7,7 +7,6 @@
 	<%= csrf_meta_tags %>
 </head>
 <body>
-
 	<nav class="navbar navbar-default" role="navigation">
 		<div class="container-fluid">
 			<!-- Brand and toggle get grouped for better mobile display -->
@@ -35,16 +34,9 @@
 					<li><%= link_to 'settings', edit_user_registration_path %></li>
 					<li><%= link_to 'logout', destroy_user_session_path, :method => :delete %></li>
 					<% else %>
-					<%= form_for(resource, as: resource_name, url: new_user_session_path(resource_name)) do |f| %>
-
-					<div class="form-inline">
-						<li><%= f.text_field :phone_num, :placeholder => "phone number", :class => "form-control inline" %></li>
-						<li><%= f.password_field :password, autocomplete: "off", :placeholder => "password", :class => "form-control inline" %></li>
-						<li><%= f.submit "Sign in", :class => "form-control" %></li>
-					</div>
+					<li><%= link_to 'sign in', new_user_session_path %></li>
 					<% end %>
-
-					<% end %>
+					
 				</ul>
 			</div><!-- /.navbar-collapse -->
 		</div><!-- /.container-fluid -->
@@ -59,6 +51,9 @@
 
 	</div>
 
+<script>
+$('.dropdown-toggle').dropdown()
+</script>
 </body>
 </html>
 
