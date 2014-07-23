@@ -5,7 +5,7 @@ class GroupsController < ApplicationController
   # GET /groups.json
   def index
     if current_user.group_id != nil
-      @mygroups = Group.find(current_user.group_id)
+      @mygroups = User.find(current_user.id).groups
     end
     @publicgroups = Group.all
   end
