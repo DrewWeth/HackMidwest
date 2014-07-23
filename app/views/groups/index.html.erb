@@ -1,7 +1,7 @@
 <!-- Groups Index -->
 
 <div class="col-sm-7">
-<h1>your groups <%= link_to 'make a group', new_group_path, {:class => "btn btn-primary"} %></h1>
+<h1>your groups <%= link_to 'make a group', new_group_path, {:class => "pull-right btn btn-primary"} %></h1>
 
 <% if current_user != nil and current_user.group_id != nil %>
 <table class="table table-striped">
@@ -16,7 +16,7 @@
   <tbody>
     <% @mygroups.each do |group| %>
       <tr>
-        <td><%= group.name %></td>
+        <td><span class="badge"><%= group.name %></td></span>
         <td><%= group.desc %></td>
         <td><%= link_to 'Show', group %></td>
         <td><%= link_to 'Edit', edit_group_path(group) %></td>
@@ -31,7 +31,7 @@ register to make groups, join a groups, and start making alerts.
 <% end %>
 </div>
 <div class="col-sm-5">
-<h1>explore local groups</h1>
+<h1>local groups</h1>
 
 <table class="table table-striped">
   <thead>

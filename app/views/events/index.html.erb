@@ -1,6 +1,6 @@
 <div class="row">
   <div class="col-sm-6">
-    <h1>your events <%= link_to 'new event', new_event_path, {:class => "inline btn btn-primary"} %></h1>
+    <h1>your events <%= link_to 'create event', new_event_path, {:class => "pull-right inline btn btn-primary"} %></h1>
     <% if current_user != nil and @events.count != 0 %> 
     <table class="table table-striped">
     <% @events.each do |event| %>
@@ -8,8 +8,14 @@
     <tr>
     <td>
      <%= link_to event.name, event %> | <%= link_to group.name, group %>
-
-      <small class="pull-right"><%= event.start.strftime("%B %d, %Y at %I:%M %p")  %></small>
+     <% in_days = ((Time.now - event.start) / 1.days).round(1) %>
+      <small class="pull-right">
+      <% if in_days <= 5 %>
+      in <%= in_days %> days
+      <% else %>
+        <%= event.start.strftime("%B %d, %Y at %I:%M %p")  %>
+        <% end %> 
+      </small>
       <br>
       |<% if !event.desc.empty? %>
       <%= event.desc %>
@@ -35,7 +41,15 @@
     <tr>
     <td>
      <%= link_to event.name, event %>
-      <small class="pull-right"><%= event.start.strftime("%B %d, %Y at %I:%M %p")  %></small>
+      <% in_days = ((Time.now - event.start) / 1.days).round(1) %>
+      <small class="pull-right">
+      <% if in_days <= 5 %>
+      in <%= in_days %> days
+      <% else %>
+        <%= event.start.strftime("%B %d, %Y at %I:%M %p")  %>
+        <% end %> 
+     
+      </small>
       <br>
       |<% if !event.desc.empty? %>
       <%= event.desc %>

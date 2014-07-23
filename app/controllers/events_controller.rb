@@ -12,6 +12,7 @@ class EventsController < ApplicationController
       groups.each do |g|
         @events += g.events
       end
+      @events.sort! {|a, b| a.start <=> b.start}
       @public_events = Event.all.where(:is_public => true)
 
     else
@@ -29,8 +30,8 @@ class EventsController < ApplicationController
   def show
     @events = Event.find(params[:id])
 
-    @all_alerts = @events.alerts
-    @queue_alerts = @events.alerts.where.not(:is_sent => true)
+    @all_alerts = @events.alerts.where(:is_sent => true) # sent alerts i.e. not deletable
+    @queue_alerts = @events.alerts.where.not(:is_sent => true) # unsent alerts i.e. deletable
 
     @has_attended = false
     if current_user != nil
