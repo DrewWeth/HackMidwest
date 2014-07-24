@@ -4,12 +4,18 @@
   <%= devise_error_messages! %>
 
   <div><%= f.label :email %><br />
-  <%= f.text_field :email, autofocus: true, :placeholder => "email", :class => "form-control" %></div>
+  <%= f.email_field :email, autofocus: true, :placeholder => "email", :class => "form-control" %></div>
 
   <div><%= f.label :password %><br />
     <%= f.password_field :password, autocomplete: "off", :placeholder => "password", :class => "form-control" %></div>
-    <div><%= f.label :phone_num %><br />
+<div><%= f.label :phone_num %><br />
     <%= f.text_field :phone_num, :placeholder => "phone number (include area code)", :class => "form-control" %></div>
+
+  <div><%= f.label :password_confirmation %><br />
+    <%= f.password_field :password_confirmation, autocomplete: "off", :placeholder => "confirm password", :class => "form-control" %></div>
+    
+  <div><%= f.label :phone_num %><br />
+    <%= f.telephone_field :phone_num, :placeholder => "phone number (include area code)", :class => "form-control" %></div>
 
 
     <label>Submit</label>

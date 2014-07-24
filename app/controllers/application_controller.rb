@@ -18,7 +18,7 @@ class ApplicationController < ActionController::Base
 		end
 	end
 	def configure_devise_permitted_parameters
-		registration_params = [:phone_num, :password]
+		registration_params = [:phone_num, :password, :password_confirmation, :email]
 
 		if params[:action] == 'create'
 		  devise_parameter_sanitizer.for(:sign_up) { 
