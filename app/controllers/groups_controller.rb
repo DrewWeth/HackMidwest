@@ -4,7 +4,7 @@ class GroupsController < ApplicationController
   # GET /groups
   # GET /groups.json
   def index
-    if current_user != nil
+    if current_user
       @mygroups = User.find(current_user.id).groups
     else
       @mygroups = []
@@ -29,11 +29,14 @@ class GroupsController < ApplicationController
 
   def join
     user = User.find(current_user.id)
+    
     membership = Membership.new
     membership.user_id = current_user.id
     membership.group_id = params[:id]
     membership.save
+
     @group = Group.find(membership.group_id)
+    
     respond_to do |format|
       if user.save
         format.html { redirect_to @group, notice: 'you were added to the group!' }
@@ -46,8 +49,9 @@ class GroupsController < ApplicationController
   end
 
   def leave
-    current_user.group_id = nil
-    current_user.save
+    member = Member.all.where(:user_id => current_user.id).where(:group_id => params[:id])
+    member.destroy
+
     redirect_to groups_path
   end
 
@@ -117,6 +121,11 @@ class GroupsController < ApplicationController
   # POST /groups.json
   def create
     @group = Group.new(group_params)
+    
+    member = Membership.new
+    member.user_id = current_user.id
+    member.group_id = params[:id]
+    member.save
 
     respond_to do |format|
       if @group.save

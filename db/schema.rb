@@ -11,12 +11,12 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140722012649) do
+ActiveRecord::Schema.define(version: 20140723040110) do
 
   create_table "alerts", force: true do |t|
     t.integer  "event_id"
     t.datetime "send_datetime"
-    t.boolean  "is_sent",        null: false
+    t.boolean  "is_sent"
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string   "body"
@@ -43,12 +43,19 @@ ActiveRecord::Schema.define(version: 20140722012649) do
     t.string   "address"
     t.float    "latitude"
     t.float    "longitude"
-    t.boolean  "over"
+    t.boolean  "over",       default: false
   end
 
   create_table "groups", force: true do |t|
     t.string   "name"
     t.string   "desc"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "memberships", force: true do |t|
+    t.integer  "user_id"
+    t.integer  "group_id"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
