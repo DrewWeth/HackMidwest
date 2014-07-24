@@ -1,85 +1,114 @@
 <p id="notice"><%= notice %></p>
 
-<h1>Event <%= @event.id %>: <%= @event.name %> 
-<% if @has_attended == true %>
-  <label class="label label-success">You have attended!</label>
-<% end %>
+<h1><%= @event.name %> 
+  <% if @has_attended == true %>
+  <label class="pull-right label label-success">attended!</label>
+  <% end %>
 </h1>
-
-<p>
-  <strong>Name:</strong>
-  <%= @event.name %>
-</p>
-
-<p>
-  <strong>Desc:</strong>
-  <%= @event.desc %>
-</p>
-
-<p>
-  <strong>Start:</strong>
-  <%= @event.start.strftime("%B %d, %Y at %I:%M %p"); %>
-</p>
-
-<p>
-  <strong>End:</strong>
-  <%= @event.end.strftime("%B %d, %Y at %I:%M %p"); %>
-</p>
-
-<p>
-  <strong>Location:</strong>
-  <%= @event.location %>
-</p>
-
-<p>
-  <strong>Is public:</strong>
-  <%= @event.is_public %>
-</p>
-
-<p>
-  <strong>Group ID:</strong>
-  <%= @event.group_id %>
-</p>
-
-
-<%= link_to 'Edit', edit_event_path(@event) %> |
-<%= link_to 'Back', events_path %>
-
-
-
-<hr>
-
-
-<h1>All Alerts</h1>
 <table>
-  <thead>
-    <tr>
-      <th>Event</th>
-      <th>Send datetime</th>
-      <th>Is sent</th>
-      <th>Body</th>
-      <th>is_event_start</th>
-      <th colspan="3"></th>
-    </tr>
-  </thead>
+  <tr>
+    <td style="width: 35%">
+      name
+    </td>
+    <td>
+      <%= @event.name %>
+    </td>
+  </tr>
+  <tr>
+    <td>
+      description 
+    </td>
+    <td>
+      <%= @event.desc %>
+    </td>
+  </tr>
 
-  <tbody>
-    <% @all_alerts.each do |alert| %>
-      <tr>
-        <td><%= alert.event_id %></td>
-        <td><%= alert.send_datetime.strftime("%B %d, %Y at %I:%M %p"); %></td>
-        <td><%= alert.is_sent %></td>
-        
-        <td><%= alert.body %></td>
-        <td><%= alert.is_event_start %>
-        <td><%= link_to 'Show', alert %></td>
-        <td><%= link_to 'Edit', edit_alert_path(alert) %></td>
-        <td><%= link_to 'Destroy', alert, method: :delete, data: { confirm: 'Are you sure?' } %></td>
-      </tr>
-    <% end %>
-  </tbody>
+  <tr>
+    <td>
+      start
+    </td>
+    <td> 
+      <%= @event.start.strftime("%B %d, %Y at %I:%M %p").downcase %>
+    </td>
+  </tr>
+  <tr>
+    <td>
+      end 
+    </td>
+    <td>
+      <%= @event.end.strftime("%B %d, %Y at %I:%M %p").downcase %>
+    </td>
+  </tr>
+  <tr>
+    <td>
+      location 
+    </td>
+    <td>
+      <% if @event.location != nil %>
+        <%= @event.location %>
+        <% else %>
+        not specified
+        <% end %>
+    </td>
+  </tr>
+
+  <tr>
+    <td>
+      status
+    </td>
+    <td>
+      <% if @event.is_public == true %>
+        <label class="label label-success">public</label>
+      <% else %>
+        <label class="label label-danger">private</label>
+      <% end %>
+    </td>
+  </tr>
+  <tr>
+    <td>
+      belongs to 
+    </td>
+    <td>
+      <%= link_to @group.name, @group %>
+    </td>
+  </tr>
 </table>
 
-<hr>
+<br>
+  <%= link_to 'Edit', edit_event_path(@event) %> |
+  <%= link_to 'Back', events_path %>
 
-<%= link_to 'Make Alert', new_alert_path %>
+
+  <h2>all alerts</h2> <%= link_to 'Make Alert', new_alert_path %>
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>scheduled for</th>
+        <th>sent</th>
+        <th>message</th>
+        <th colspan="3"></th>
+      </tr>
+    </thead>
+
+    <tbody>
+      <% @all_alerts.each do |alert| %>
+      <tr>
+        <td><%= alert.send_datetime.strftime("%B %d, %Y at %I:%M %p"); %></td>
+        <td>
+          <% if alert.is_sent == true %>
+          <label class="label label-success">sent</label>
+          <% else %>
+          <label class="label label-danger">queued</label>
+
+          <% end %>
+          <td><%= alert.body %></td>
+          <td><%= link_to 'Show', alert %></td>
+          <td><%= link_to 'Edit', edit_alert_path(alert) %></td>
+          <td><%= link_to 'Destroy', alert, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+        </tr>
+        <% end %>
+      </tbody>
+    </table>
+
+    <hr>
+

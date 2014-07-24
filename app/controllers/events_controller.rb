@@ -29,10 +29,10 @@ class EventsController < ApplicationController
   # GET /events/1.json
   def show
     @events = Event.find(params[:id])
-
-    @all_alerts = @events.alerts.where(:is_sent => true) # sent alerts i.e. not deletable
-    @queue_alerts = @events.alerts.where.not(:is_sent => true) # unsent alerts i.e. deletable
-
+    @group = Group.find(@events.group_id)
+    
+    @all_alerts = @events.alerts  # sent alerts i.e. not deletable
+    
     @has_attended = false
     if current_user != nil
       confirmation_list = Confirmation.all.where(:user_id => current_user.id).where(:event_id => params[:id])
@@ -101,7 +101,7 @@ class EventsController < ApplicationController
         log.is_sent = false;
         group_for_event = Group.find(@event.group_id)
         url_string = root_url + "confirmations/new?user_id=" + current_user.id.to_s + "&event_id=" + @event.id.to_s
-        log.body = "!!! " + group_for_event.name + "'s event: " + @event.name + " has started!. Sign in here: " + url_string
+        log.body = group_for_event.name + "'s event, " + @event.name + ", has started!. Sign in here: " + url_string
         
 
         log.save
