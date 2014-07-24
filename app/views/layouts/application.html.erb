@@ -45,8 +45,9 @@
 
 	<div class="container">
 	<div class="well" style="opacity:.87">
-		<%= yield %>
 		<p class="notice"><%= notice %></p>
+		
+		<%= yield %>
 		<!-- <p class="alert"><%= alert %></p> -->
 		<hr>
 		<a href="/"><%= Time.now %></a>
@@ -62,7 +63,7 @@ $(document).ready(function(){
 
 	var t = new Trianglify({noiseIntensity: 0, strokeOpacity: Math.random(), fillOpacity: Math.random()});
 	var pattern = t.generate(window.innerWidth, window.innerHeight);
-	$('body').css({"background": pattern.dataUrl + " no-repeat center center fixed"} );
+	$('body').css({"background": pattern.dataUrl + " no-repeat center center fixed", "background-size": "cover"} );
 })
 </script>
 

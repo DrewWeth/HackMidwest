@@ -40,8 +40,6 @@ class EventsController < ApplicationController
         @has_attended = true 
       end
     end
-
-
   end
 
   # method to verify if user at event
