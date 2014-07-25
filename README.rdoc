@@ -1,28 +1,3 @@
-== README
+== u:nify
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
-
-Things you may want to cover:
-
-* Ruby version
-
-* System dependencies
-
-* Configuration
-
-* Database creation
-
-* Database initialization
-
-* How to run the test suite
-
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
-
-
-Please feel free to use a different markup language if you do not plan to run
-<tt>rake doc:app</tt>.
+A system to organize meetings with groups of people. App texts member of an event before it occurs, as a reminder, and during. At the start of the meeting users can confirm they were there with GPS location confirmation.
