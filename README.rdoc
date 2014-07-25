@@ -4,9 +4,9 @@ A system to organize meetings with groups of people. App texts member of an even
 
 
 == Gems
-* cancan
-* devise
-* rolify
-* prism JS
-* please.js
-* twilio-ruby
+* Cancan
+* Devise
+* Rolify
+* Triaglify JS
+* Please.js
+* Twilio-ruby
