@@ -1,3 +1,12 @@
 == u:nify
 
 A system to organize meetings with groups of people. App texts member of an event before it occurs, as a reminder, and during. At the start of the meeting users can confirm they were there with GPS location confirmation.
+
+
+== Gems
+* cancan
+* devise
+* rolify
+* prism JS
+* please.js
+* twilio-ruby
