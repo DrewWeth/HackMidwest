@@ -1,6 +1,45 @@
 <h1>edit group</h1>
 
+<div id="normal">
 <%= render 'form' %>
+</div>
+<%= link_to 'show', @group %> |
+<%= link_to 'back', groups_path %> |
+<a id="more_action">more settings</a>
 
-<%= link_to 'Show', @group %> |
-<%= link_to 'Back', groups_path %>
+<div id="more_content" style="display:none">
+<hr>
+<%= form_for(@group) do |f| %>
+  <% if @group.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@group.errors.count, "error") %> prohibited this group from being saved:</h2>
+
+      <ul>
+      <% @group.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+  
+  <div class="field">
+    <label>members can make events?</label>
+    <%= f.check_box :desc, :class => "form-control" %> 
+  </div>
+  
+
+  <div class="actions">
+    <%= f.submit 'save', :class => "btn btn-primary form-control" %>
+  </div>
+<% end %>
+</div>
+
+<script type="text/javascript">
+	$('#more_action').click(function()
+	{
+		$('#more_content').toggle('fast');
+		$('#normal').toggle('fast');
+
+	});
+
+</script>

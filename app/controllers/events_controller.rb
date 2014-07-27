@@ -4,14 +4,22 @@ class EventsController < ApplicationController
   # GET /events
   # GET /events.json
 
-
   def index
     if current_user != nil
+      time = Time.now
       groups = User.find(current_user.id).groups
       @events = []
+
+      # written at 2:43am. this seems super inefficient
       groups.each do |g|
-        @events += g.events
+        g.events.each do |e|
+          if !e.start.past?
+            # (e.start - time)/1.days >= 0
+            @events.push(e)
+          end
+        end
       end
+      
       @events.sort! {|a, b| a.start <=> b.start}
       @public_events = Event.all.where(:is_public => true)
 
@@ -35,7 +43,7 @@ class EventsController < ApplicationController
     
     @has_attended = false
     if current_user != nil
-      confirmation_list = Confirmation.all.where(:user_id => current_user.id).where(:event_id => params[:id])
+      confirmation_list = Confirmation.where(:user_id => current_user.id).where(:event_id => params[:id]).take
       if confirmation_list != nil
         @has_attended = true 
       end
@@ -88,23 +96,56 @@ class EventsController < ApplicationController
   # POST /events
   # POST /events.json
   def create
-
     @event = Event.new(event_params)
     @event.group_id = session[:group_id]
+
+    group_for_event = Group.find(@event.group_id)
+
     respond_to do |format|
       if @event.save
-        
+        # if params[:alert_template] == '1'
+        #   arr_alerts = [72, 24, 0] # Alerts are in hours away
+         if params[:alert_template] == '2'
+          arr_alerts = [24, 3, 0] # Alerts are in hours away
+        elsif params[:alert_template] == '3'
+          arr_alerts = [3, 0] # Alerts are in hours away
+        else params[:alert_template] == '4'
+          arr_alerts = [0] # Alerts are in hours away
+        end
+        # has to be after event.save to be assigned a PK
+        url_string = root_url + "confirmations/new?user_id=" + current_user.id.to_s + "&event_id=" + @event.id.to_s
+
+        # initial alert
         log = Alert.new
         log.event_id = @event.id
-        log.send_datetime = @event.start
-        log.is_event_start = true
-        log.is_sent = false;
-        group_for_event = Group.find(@event.group_id)
-        url_string = root_url + "confirmations/new?user_id=" + current_user.id.to_s + "&event_id=" + @event.id.to_s
-        log.body = group_for_event.name + "'s event, " + @event.name + ", has started!. Sign in here: " + url_string
+        log.send_datetime = Time.now
+        log.body = group_for_event.name + "'s event, " + @event.name + ", is on " + @event.start.to_s
+        log.save
+
+        # 'temporal alerts'
+        arr_alerts.each do |a|
+          log = Alert.new
+          log.event_id = @event.id
+          log.send_datetime = @event.start - a.hours # set time from start to do send
+
+          if a == 0
+            log.is_event_start = true
+            log.body = group_for_event.name + "'s event, " + @event.name + ", has started!. Sign in here: " + url_string
+          else
+            log.is_event_start = false
+            if a <= 24
+              log.body = group_for_event.name + "'s event, " + @event.name + ", starts in " + a.to_s + " hours."
+            else
+              log.body = group_for_event.name + "'s event, " + @event.name + ", starts in " + ((a/1.day).to_s) + " days."
+            end
+          end    
+          log.save
+        end
+
         
 
-        log.save
+        
+
 
         format.html { redirect_to @event, notice: 'Event was successfully created.' }
         format.json { render :show, status: :created, location: @event }

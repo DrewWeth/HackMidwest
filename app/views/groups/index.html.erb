@@ -3,7 +3,7 @@
 <div class="col-sm-7">
 <h1>your groups <%= link_to 'make a group', new_group_path, {:class => "pull-right btn btn-primary"} %></h1>
 
-<% if current_user != nil and current_user.group_id != nil %>
+<% if current_user != nil %>
 <table class="table table-striped">
   <thead>
     <tr>

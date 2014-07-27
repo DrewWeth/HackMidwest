@@ -1,5 +1,3 @@
-<!-- Group / show  -->
-<p id="notice"><%= notice %></p>
 <div class="row">
 <div class="col-sm-12">
 
@@ -12,9 +10,7 @@
     <%= link_to("Leave", :controller => "groups", :action => "leave", :id => params[:id]) %> |
   <% else %>
     <%= link_to("Join", :controller => "groups", :action => "join", :id => params[:id])  %> | 
-  
   <% end %>
-
   <%= link_to 'Create Event', new_event_path %> |
 <% end %>
 
@@ -28,13 +24,14 @@
 <div class="row">
 <div class="col-sm-12">
 <% if !@events.empty? %>
+<h3>scheduled events</h3>
 <table class="table table-striped">
   <thead>
     <tr>
       <th>event</th>
       <th>description</th>
       <th>starts @</th>
-      <th>ends @</th>
+      <th>duration @</th>
       <th>location</th>
       <th>status</th>
       <th colspan="3"></th>
@@ -47,7 +44,7 @@
         <td><%= event.name %></td>
         <td><%= event.desc %></td>
         <td><%= event.start.strftime("%B %d, %Y at %I:%M %p"); %></td>
-        <td><%= event.end.strftime("%B %d, %Y at %I:%M %p"); %></td>
+        <td><%= event.end %></td>
         <td>
         <% if event.location != nil and event.location .to_s != '' %>
           <%= event.location %>

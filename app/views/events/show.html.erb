@@ -1,106 +1,115 @@
-<p id="notice"><%= notice %></p>
-
-<h1><%= @event.name %> 
-  <% if @has_attended == true %>
-  <label class="pull-right label label-success">attended!</label>
-  <% end %>
-</h1>
-<table>
-  <tr>
-    <td style="width: 35%">
-      name
-    </td>
-    <td>
-      <%= @event.name %>
-    </td>
-  </tr>
-  <tr>
-    <td>
-      description 
-    </td>
-    <td>
-      <%= @event.desc %>
-    </td>
-  </tr>
-
-  <tr>
-    <td>
-      start
-    </td>
-    <td> 
-      <%= @event.start.strftime("%B %d, %Y at %I:%M %p").downcase %>
-    </td>
-  </tr>
-  <tr>
-    <td>
-      end 
-    </td>
-    <td>
-      <%= @event.end.strftime("%B %d, %Y at %I:%M %p").downcase %>
-    </td>
-  </tr>
-  <tr>
-    <td>
-      location 
-    </td>
-    <td>
-      <% if @event.location != nil %>
-        <%= @event.location %>
-        <% else %>
-        not specified
-        <% end %>
-    </td>
-  </tr>
-
-  <tr>
-    <td>
-      status
-    </td>
-    <td>
-      <% if @event.is_public == true %>
-        <label class="label label-success">public</label>
-      <% else %>
-        <label class="label label-danger">private</label>
+<div class="row">
+  <div class="col-sm-6">
+    <h1><%= @event.name %> 
+      <% if @has_attended == true %>
+      <label class="pull-right label label-success">attended!</label>
       <% end %>
-    </td>
-  </tr>
-  <tr>
-    <td>
-      belongs to 
-    </td>
-    <td>
-      <%= link_to @group.name, @group %>
-    </td>
-  </tr>
-</table>
-
-<br>
-  <%= link_to 'Edit', edit_event_path(@event) %> |
-  <%= link_to 'Back', events_path %>
-
-
-  <h2>all alerts</h2> <%= link_to 'Make Alert', new_alert_path %>
-  <table class="table table-striped">
-    <thead>
+    </h1>
+    <table class="table table-striped">
       <tr>
-        <th>scheduled for</th>
-        <th>sent</th>
-        <th>message</th>
-        <th colspan="3"></th>
-      </tr>
-    </thead>
-
-    <tbody>
-      <% @all_alerts.each do |alert| %>
-      <tr>
-        <td><%= alert.send_datetime.strftime("%B %d, %Y at %I:%M %p"); %></td>
+      <td>
+          name
+        </td>
         <td>
-          <% if alert.is_sent == true %>
-          <label class="label label-success">sent</label>
-          <% else %>
-          <label class="label label-danger">queued</label>
+          <%= @event.name %>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          description 
+        </td>
+        <td>
+          <%= @event.desc %>
+        </td>
+      </tr>
 
+      <tr>
+        <td>
+          start
+        </td>
+        <td> 
+          <%= @event.start.strftime("%B %d, %Y at %I:%M %p").downcase %>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          end 
+        </td>
+        <td>
+          <%= (@event.start + ( @event.end * 1.hours)).strftime("%B %d, %Y at %I:%M %p").downcase %>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          location 
+        </td>
+        <td>
+          <% if @event.location != nil %>
+          <%= @event.location %>
+          <% else %>
+          not specified
           <% end %>
+        </td>
+      </tr>
+
+      <tr>
+        <td>
+          status
+        </td>
+        <td>
+          <% if @event.is_public == true %>
+          <label class="label label-success">public</label>
+          <% else %>
+          <label class="label label-danger">private</label>
+          <% end %>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          belongs to 
+        </td>
+        <td>
+          <%= link_to @group.name, @group %>
+        </td>
+      </tr>
+    </table>
+
+    <br>
+    <%= link_to 'Edit', edit_event_path(@event) %> |
+    <%= link_to 'Back', events_path %>
+
+  </div>
+  <div class="col-sm-6">
+    <div id="map-canvas">
+    </div>  
+    bitch
+  </div>
+</div>
+<div class="row">
+  <div class="col-sm-12">
+  <% if current_user %>
+    <h2>all alerts</h2> <%= link_to 'Make Alert', new_alert_path %>
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>scheduled for</th>
+          <th>sent</th>
+          <th>message</th>
+          <th colspan="3"></th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <% @all_alerts.each do |alert| %>
+        <tr>
+          <td><%= alert.send_datetime.strftime("%B %d, %Y at %I:%M %p"); %></td>
+          <td>
+            <% if alert.is_sent == true %>
+              <label class="label label-success">sent</label>
+            <% else %>
+              <label class="label label-danger">queued</label>
+            <% end %>
+          </td>
           <td><%= alert.body %></td>
           <td><%= link_to 'Show', alert %></td>
           <td><%= link_to 'Edit', edit_alert_path(alert) %></td>
@@ -109,6 +118,24 @@
         <% end %>
       </tbody>
     </table>
+  <% end %>
+  </div>
+</div>
 
-    <hr>
+<hr>
 
+
+<script type="text/javascript"
+src="https://maps.googleapis.com/maps/api/js?sensor=true">
+</script>
+<script type="text/javascript">
+  function initialize() {
+    var mapOptions = {
+      center: new google.maps.LatLng(-34.397, 150.644),
+      zoom: 8
+    };
+    var map = new google.maps.Map(document.getElementById("map-canvas"),
+      mapOptions);
+  }
+  google.maps.event.addDomListener(window, 'load', initialize);
+</script>

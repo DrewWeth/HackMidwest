@@ -11,12 +11,12 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140723040110) do
+ActiveRecord::Schema.define(version: 20140726213412) do
 
   create_table "alerts", force: true do |t|
     t.integer  "event_id"
     t.datetime "send_datetime"
-    t.boolean  "is_sent"
+    t.boolean  "is_sent",        default: false
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string   "body"
@@ -34,7 +34,7 @@ ActiveRecord::Schema.define(version: 20140723040110) do
     t.string   "name"
     t.string   "desc"
     t.datetime "start"
-    t.datetime "end"
+    t.float    "end"
     t.string   "location"
     t.boolean  "is_public"
     t.datetime "created_at"
@@ -51,6 +51,9 @@ ActiveRecord::Schema.define(version: 20140723040110) do
     t.string   "desc"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.boolean  "is_active",    default: true
+    t.integer  "member_count", default: 0
+    t.integer  "parent_id"
   end
 
   create_table "memberships", force: true do |t|

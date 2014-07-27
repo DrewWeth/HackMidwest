@@ -4,7 +4,7 @@ class GroupsController < ApplicationController
   # GET /groups
   # GET /groups.json
   def index
-    if current_user
+    if current_user != nil
       @mygroups = User.find(current_user.id).groups
     else
       @mygroups = []
@@ -15,42 +15,66 @@ class GroupsController < ApplicationController
   # GET /groups/1
   # GET /groups/1.json
   def show
-    @events = Group.find(params[:id]).events.where(:over => nil)
-    selected_group = Group.find(params[:id])
-    memberships = User.find(current_user.id).groups
-    if memberships.include?(selected_group)
-      @is_member = true
+    if current_user != nil
+      @events = Group.find(params[:id]).events
+      selected_group = Group.find(params[:id])
+
+      memberships = User.find(current_user.id).groups
+      if memberships.include?(selected_group)
+        @is_member = true
+      else
+        @is_member = false
+      end
+      session[:group_id] = params[:id]
     else
-      @is_member = false
+      
+      @events = Group.find(params[:id]).events.where(is_public: true)
     end
-    session[:group_id] = params[:id]
-    
   end
 
   def join
-    user = User.find(current_user.id)
-    
-    membership = Membership.new
-    membership.user_id = current_user.id
-    membership.group_id = params[:id]
-    membership.save
+    if current_user != nil
 
-    @group = Group.find(membership.group_id)
-    
-    respond_to do |format|
-      if user.save
-        format.html { redirect_to @group, notice: 'you were added to the group!' }
-        format.json { render :show, status: :ok, location: @group }
-      else
-        format.html { render :edit }
-        format.json { render json: @group.errors, status: :unprocessable_entity }
+      # actually add member to group
+      membership = Membership.new
+      membership.user_id = current_user.id
+      membership.group_id = params[:id]
+      
+
+      respond_to do |format|
+        if membership.save
+
+          # increase member count
+          @group = Group.find(membership.group_id)
+          @group.member_count += 1
+          @group.save
+
+
+          format.html { redirect_to @group, notice: 'you were added to the group!' }
+          format.json { render :show, status: :ok, location: @group }
+        else
+          format.html { render :edit }
+          format.json { render json: @group.errors, status: :unprocessable_entity }
+        end
       end
+    else
+      redirect_to new_user_session_path
     end
   end
 
   def leave
-    member = Member.all.where(:user_id => current_user.id).where(:group_id => params[:id])
-    member.destroy
+    
+    group = Group.find(params[:id])
+    
+    # decrements member count and if no one is in it, then make it inactive
+    group.member_count -= 1
+    if group.member_count == 0
+      group.is_active = false
+    end
+    group.save
+
+    member = Membership.where(user_id: current_user.id).where(group_id: params[:id]).take
+    Membership.delete(member.id)
 
     redirect_to groups_path
   end
@@ -62,18 +86,18 @@ class GroupsController < ApplicationController
       session[:page_load] = 0
     end
 
-    @queue_alerts = Alert.all.where.not(:is_sent => true)
+    @queue_alerts = Alert.all.where(:is_sent => false)
 
     require 'twilio-ruby'
     puts "Twilio authentication"
     account_sid = 'AC29e7b96239c5f0bfc6ab8b724e263f30'
     auth_token = 'e9befab8a2ea884e92db21709fe073e1'
     
-    # begin
-    #   @client = Twilio::REST::Client.new account_sid, auth_token
-    # rescue Twilio::RESR::RequestError => e
-    #   puts e.message
-    # end
+    begin
+      @client = Twilio::REST::Client.new account_sid, auth_token
+    rescue Twilio::RESR::RequestError => e
+      puts e.message
+    end
     @queue_alerts.each do |u|
       if u.send_datetime.past?
         the_event = Event.find(u.event_id)
@@ -86,10 +110,10 @@ class GroupsController < ApplicationController
         
         list_of_nums.each do |l|
           mob_num = "+1" + l.phone_num.to_s
-          # @client.account.messages.create(
-          #   :from => '+13147363270',
-          #   :to => mob_num,
-          #   :body => u.body )
+          @client.account.messages.create(
+            :from => '+13147363270',
+            :to => mob_num,
+            :body => u.body )
           
           u.is_sent = true
           u.save
@@ -122,13 +146,13 @@ class GroupsController < ApplicationController
   def create
     @group = Group.new(group_params)
     
-    member = Membership.new
-    member.user_id = current_user.id
-    member.group_id = params[:id]
-    member.save
-
     respond_to do |format|
       if @group.save
+        membership = Membership.new
+        membership.user_id = current_user.id
+        membership.group_id = @group.id
+        membership.save
+        
         format.html { redirect_to @group, notice: 'group was successfully created.' }
         format.json { render :show, status: :created, location: @group }
       else

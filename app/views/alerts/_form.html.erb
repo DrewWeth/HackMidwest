@@ -13,27 +13,11 @@
 
 
   <div class="field">
-    <%= f.label :event_id %><br>
-    <%= f.text_field :event_id %>
-  </div>
-  <div class="field">
     <%= f.label :send_datetime %><br>
-    <%= f.datetime_select :send_datetime %>
+    <%= f.datetime_select :send_datetime, :order => [:month, :day, :year, :hour, :minute], :class => 'form-control'  %>
   </div>
-  <div class="field">
-    <%= f.label :is_sent %><br>
-    <%= f.check_box :is_sent %>
-  </div>
-  <div class="field">
-    <%= f.label :body %><br>
-    <%= f.text_field :body %>
-  </div>
-  <div class="field">
-    <%= f.label :event_id %><br>
-    <%= f.number_field :event_id %>
-  </div>
-
+    <input type="hidden" name="event_id" value="<%= session[:event_id] %>"/>
   <div class="actions">
-    <%= f.submit %>
+    <%= f.submit 'save', :class => 'btn btn-default form-control' %>
   </div>
 <% end %>

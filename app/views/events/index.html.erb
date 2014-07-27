@@ -1,6 +1,6 @@
 <div class="row">
   <div class="col-sm-6">
-    <h1>your events <%= link_to 'create event', new_event_path, {:class => "pull-right inline btn btn-primary"} %></h1>
+    <h1>your events</h1>
     <% if current_user != nil and @events.count != 0 %> 
     <table class="table table-striped">
     <% @events.each do |event| %>
@@ -8,7 +8,7 @@
     <tr>
     <td>
      <%= link_to event.name, event %> | <%= link_to group.name, group %>
-     <% in_days = ((Time.now - event.start) / 1.days).round(1) %>
+     <% in_days = ((event.start - Time.now) / 1.days).round(1) %>
       <small class="pull-right">
       <% if in_days <= 5 %>
       in <%= in_days %> days
@@ -27,21 +27,21 @@
     <% end %>
     </table>
     <% else %>
-    you dont have any events planned. make an event through a group
+    you dont have any events planned. make an event through a <%= link_to 'group', groups_url %>
 
     <% end %> 
   </div>
 
   <div class="col-sm-6">
     <h1>local public events</h1>
-    <% if current_user != nil and @events.count != 0 %> 
+    <% if @public_events.count > 0 %> 
     
     <table class="table table-striped">
     <% @public_events.each do |event| %>
     <tr>
     <td>
      <%= link_to event.name, event %>
-      <% in_days = ((Time.now - event.start) / 1.days).round(1) %>
+      <% in_days = ((event.start - Time.now) / 1.days).round(1) %>
       <small class="pull-right">
       <% if in_days <= 5 %>
       in <%= in_days %> days
