@@ -16,7 +16,15 @@ class AlertsController < ApplicationController
 
   # GET /alerts/new
   def new
-    @alert = Alert.new
+    if current_user != nil
+      if session[:event_id] != nil
+        @alert = Alert.new
+      else
+        redirect_to events_url
+      end
+    else
+      redirect_to new_user_session_path
+    end
   end
 
   # GET /alerts/1/edit
@@ -27,11 +35,14 @@ class AlertsController < ApplicationController
   # POST /alerts.json
   def create
     @alert = Alert.new(alert_params)
-    @alert.is_sent = false
-    event_for_alert = Event.find(@alert.event_id)
+    event_for_alert = Event.find(session[:event_id])
     group_for_event = Group.find(event_for_alert.group_id)
-    @alert.body = group_for_event.name + "'s event: " + event_for_alert.name + " is happening: " + event_for_alert.start.strftime("%B %d, %Y at %I:%M %p") + "."
-
+    if event_for_alert.start.past?
+      @alert.body = group_for_event.name.humanize + "'s event: " + event_for_alert.name.humanize + " has started"
+    else
+      @alert.body = group_for_event.name.humanize + "'s event: " + event_for_alert.name.humanize + " starts in " + ((Time.now - event_for_alert.start)/1.hours)
+    end
+    
     respond_to do |format|
       if @alert.save
         

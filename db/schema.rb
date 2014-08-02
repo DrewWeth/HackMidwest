@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140726213412) do
+ActiveRecord::Schema.define(version: 20140801213741) do
 
   create_table "alerts", force: true do |t|
     t.integer  "event_id"
@@ -44,6 +44,7 @@ ActiveRecord::Schema.define(version: 20140726213412) do
     t.float    "latitude"
     t.float    "longitude"
     t.boolean  "over",       default: false
+    t.string   "timezone"
   end
 
   create_table "groups", force: true do |t|
@@ -51,9 +52,10 @@ ActiveRecord::Schema.define(version: 20140726213412) do
     t.string   "desc"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.boolean  "is_active",    default: true
-    t.integer  "member_count", default: 0
+    t.boolean  "is_active",      default: true
+    t.integer  "member_count",   default: 0
     t.integer  "parent_id"
+    t.string   "request_string"
   end
 
   create_table "memberships", force: true do |t|
@@ -89,6 +91,7 @@ ActiveRecord::Schema.define(version: 20140726213412) do
     t.datetime "updated_at"
     t.integer  "group_id"
     t.string   "phone_num"
+    t.integer  "restriction_level",      default: 0
   end
 
   add_index "users", ["email"], name: "index_users_on_email", unique: true

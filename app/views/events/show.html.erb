@@ -33,21 +33,29 @@
       </tr>
       <tr>
         <td>
-          end 
+          duration 
         </td>
         <td>
-          <%= (@event.start + ( @event.end * 1.hours)).strftime("%B %d, %Y at %I:%M %p").downcase %>
+          <%= (@event.end * 1.minutes).round %> minutes
         </td>
       </tr>
       <tr>
-        <td>
-          location 
+      <td>
+        time zone
         </td>
         <td>
-          <% if @event.location != nil %>
-          <%= @event.location %>
+        <%= @event.timezone %>
+        </td>
+        </tr>
+      <tr>
+        <td>
+          address 
+        </td>
+        <td>
+          <% if @event.address != nil %>
+            <%= @event.address %>
           <% else %>
-          not specified
+            not specified
           <% end %>
         </td>
       </tr>
@@ -58,9 +66,9 @@
         </td>
         <td>
           <% if @event.is_public == true %>
-          <label class="label label-success">public</label>
+          <label class="label label-success">public event</label>
           <% else %>
-          <label class="label label-danger">private</label>
+          <label class="label label-danger">private event</label>
           <% end %>
         </td>
       </tr>

@@ -27,34 +27,41 @@ class GroupsController < ApplicationController
       end
       session[:group_id] = params[:id]
     else
-      
       @events = Group.find(params[:id]).events.where(is_public: true)
     end
   end
 
   def join
     if current_user != nil
+      @group = Group.find(params[:group_id])
+          
+      if params[:request_string] == @group.request_string
 
-      # actually add member to group
-      membership = Membership.new
-      membership.user_id = current_user.id
-      membership.group_id = params[:id]
-      
+        # actually add member to group
+        membership = Membership.new
+        membership.user_id = current_user.id
+        membership.group_id = params[:group_id]
+        
 
-      respond_to do |format|
-        if membership.save
+        respond_to do |format|
+          if membership.save
 
-          # increase member count
-          @group = Group.find(membership.group_id)
-          @group.member_count += 1
-          @group.save
+            # increase member count
+            @group.member_count += 1
+            @group.save
 
 
-          format.html { redirect_to @group, notice: 'you were added to the group!' }
-          format.json { render :show, status: :ok, location: @group }
-        else
-          format.html { render :edit }
-          format.json { render json: @group.errors, status: :unprocessable_entity }
+            format.html { redirect_to @group, notice: 'you were added to the group!' }
+            format.json { render :show, status: :ok, location: @group }
+          else
+            format.html { render :edit }
+            format.json { render json: @group.errors, status: :unprocessable_entity }
+          end
+        end
+      else
+        respond_to do |format|
+
+          format.html { redirect_to @group, notice: 'secret password did not work' }
         end
       end
     else
@@ -63,9 +70,7 @@ class GroupsController < ApplicationController
   end
 
   def leave
-    
     group = Group.find(params[:id])
-    
     # decrements member count and if no one is in it, then make it inactive
     group.member_count -= 1
     if group.member_count == 0
@@ -75,9 +80,9 @@ class GroupsController < ApplicationController
 
     member = Membership.where(user_id: current_user.id).where(group_id: params[:id]).take
     Membership.delete(member.id)
-
     redirect_to groups_path
   end
+
 
   def alert
     if session[:page_load] != nil then
@@ -106,14 +111,14 @@ class GroupsController < ApplicationController
 
         the_group = Group.find(the_event.group_id)
         
-        list_of_nums = the_group.users
+        list_of_nums = the_group.users.where(restriction_level: 0)
         
         list_of_nums.each do |l|
           mob_num = "+1" + l.phone_num.to_s
-          @client.account.messages.create(
-            :from => '+13147363270',
-            :to => mob_num,
-            :body => u.body )
+          # @client.account.messages.create(
+          #   :from => '+13147363270',
+          #   :to => mob_num,
+          #   :body => u.body )
           
           u.is_sent = true
           u.save
@@ -194,6 +199,6 @@ class GroupsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def group_params
-      params.require(:group).permit(:name, :nil)
+      params.require(:group).permit(:name, :desc, :request_string)
     end
 end

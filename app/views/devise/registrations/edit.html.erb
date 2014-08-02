@@ -24,16 +24,25 @@
               <%= f.text_field :phone_num, :class => "form-control" %></div>
 
               <label>Submit</label>
-              <div><%= f.submit "Update", :class => "btn btn-primary form-control" %></div>
+              <div><%= f.submit "update", :class => "btn btn-primary form-control" %></div>
               <% end %>
               <br>
-              <%= link_to "Back", :back %> | <%= link_to "Logout", destroy_user_session_path, :class => "btn btn-danger", :method => :delete %>
+              <%= button_to "logout", destroy_user_session_path, :class => "btn btn-info btn-sm", :method => :delete %>
               <hr>
 
 
-              <h3>Cancel my account</h3>
+              <h2>account help</h2>
+              <h4>unsync phone number <small>in case of a lost phone</small></h4>
+              <p>
+                <% if current_user.restriction_level == 0 %>
+                  <%= button_to 'unsync account', accounts_unsync_path, :class => "btn btn-warning btn-sm" %>
+                <% elsif current_user.restriction_level == 1 %>
+                  <%= button_to 're-sync account', accounts_remove_restrictions_path, :class => "btn btn-success btn-sm" %>
 
-              <p>Unhappy? <%= button_to "Cancel my account", registration_path(resource_name), data: { confirm: "Are you sure?" }, method: :delete %></p>
+                <% end %>
+              </p>
+              <h4>cancel account <small>cya</small></h4>
+              <p><%= button_to "delete my account", registration_path(resource_name), :class => "btn btn-danger btn-sm", data: { confirm: "Are you sure?" }, method: :delete %></p>
 
             </div>
           </div>

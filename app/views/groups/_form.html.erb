@@ -19,7 +19,13 @@
     <%= f.label :desc %><br>
     <%= f.text_field :desc, :class => "form-control" %>
   </div>
+  <div class="field">
+    <%= f.label :request_string %>, password to join group<br>
+    <%= f.text_field :request_string, :class => "form-control" %>
+  </div>
   
+
+
   <div class="actions">
     <%= f.submit 'save', :class => "btn btn-primary form-control" %>
   </div>

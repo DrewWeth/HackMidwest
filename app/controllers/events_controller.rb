@@ -13,7 +13,7 @@ class EventsController < ApplicationController
       # written at 2:43am. this seems super inefficient
       groups.each do |g|
         g.events.each do |e|
-          if !e.start.past?
+          if !((e.start + ( 1.hours * e.end)).past?)
             # (e.start - time)/1.days >= 0
             @events.push(e)
           end
@@ -48,6 +48,14 @@ class EventsController < ApplicationController
         @has_attended = true 
       end
     end
+    session[:event_id] = params[:id]
+    
+    
+
+
+    @serv_time = @events.start
+
+
   end
 
   # method to verify if user at event
@@ -97,12 +105,22 @@ class EventsController < ApplicationController
   # POST /events.json
   def create
     @event = Event.new(event_params)
+    back_up_event = @event
     @event.group_id = session[:group_id]
 
     group_for_event = Group.find(@event.group_id)
 
     respond_to do |format|
       if @event.save
+        # Redo time zone stuff
+
+        event_instance_for_tz = Event.find(@event.id)
+        # events_tz = Timezone::Zone.new :latlon => [@event.latitude, @event.longitude] # Get timezone of address
+        event_instance_for_tz.timezone = 'EST' # events_tz.zone
+        # event_instance_for_tz.start = event_instance_for_tz.start.in_time_zone(events_tz.zone)
+
+        event_instance_for_tz.save
+
         # if params[:alert_template] == '1'
         #   arr_alerts = [72, 24, 0] # Alerts are in hours away
          if params[:alert_template] == '2'
@@ -115,37 +133,41 @@ class EventsController < ApplicationController
         # has to be after event.save to be assigned a PK
         url_string = root_url + "confirmations/new?user_id=" + current_user.id.to_s + "&event_id=" + @event.id.to_s
 
+        # Dev notes
+        # ---------
+        # Since everything is based around Alerts, only the alert sendtime is kept in servertime
+        # Alert server time is calculated with event's start datetime and timezone
+        # Event times should be kept in local times.
         # initial alert
-        log = Alert.new
-        log.event_id = @event.id
-        log.send_datetime = Time.now
-        log.body = group_for_event.name + "'s event, " + @event.name + ", is on " + @event.start.to_s
-        log.save
+
+        alert = Alert.new
+        alert.event_id = @event.id
+        alert.send_datetime = Time.now
+        alert.body = group_for_event.name + "'s event, " + @event.name + ", is on " + @event.start.strftime("%B %d, %Y at %I:%M %p")
+        alert.save
 
         # 'temporal alerts'
         arr_alerts.each do |a|
-          log = Alert.new
-          log.event_id = @event.id
-          log.send_datetime = @event.start - a.hours # set time from start to do send
+          alert = Alert.new
+          alert.event_id = @event.id
+
+          alert.send_datetime = @event.start.in_time_zone a.hours # set time from start to do send
 
           if a == 0
-            log.is_event_start = true
-            log.body = group_for_event.name + "'s event, " + @event.name + ", has started!. Sign in here: " + url_string
+            alert.is_event_start = true
+            alert.body = group_for_event.name + "'s event, " + @event.name + ", has started!. Sign in here: " + url_string
           else
             log.is_event_start = false
             if a <= 24
-              log.body = group_for_event.name + "'s event, " + @event.name + ", starts in " + a.to_s + " hours."
+              alert.body = group_for_event.name + "'s event, " + @event.name + ", starts in " + a.to_s + " hours."
             else
-              log.body = group_for_event.name + "'s event, " + @event.name + ", starts in " + ((a/1.day).to_s) + " days."
+              alert.body = group_for_event.name + "'s event, " + @event.name + ", starts in " + ((a/1.day).to_s) + " days."
             end
           end    
-          log.save
+          alert.save
         end
 
         
-
-        
-
 
         format.html { redirect_to @event, notice: 'Event was successfully created.' }
         format.json { render :show, status: :created, location: @event }

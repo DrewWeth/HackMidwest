@@ -3,7 +3,7 @@
 	<div class="col-sm-12">
 		<ul class="nav nav-pills nav-justified" role="tablist">
 			<li class="active"><a href="#about" role="tab" data-toggle="tab">about</a></li>
-			<li><a href="#examples" role="tab" data-toggle="tab">examples</a></li>
+			<li><a href="#examples" role="tab" data-toggle="tab">demos</a></li>
 			<li><a href="#team" role="tab" data-toggle="tab">our team</a></li>
 			<li><a href="#help" role="tab" data-toggle="tab">help</a></li>
 		</ul>
@@ -43,7 +43,7 @@
 		<h3>collaborators</h3>
 		<ul>
 			<li>
-				Drew Wetherington
+				<a href="http://druweth.herokuapp.com/">Drew Wetherington</a>
 			</li>
 			<li>
 				Chris Dopuch
@@ -59,16 +59,15 @@
 			</li>
 			<li>
 				Pat McAvoy
-				</li>
+			</li>
 		</ul>
 	</div>
 	<div class="tab-pane fade" id="help">
 	<h1>help!</h1>
 		<h3>lost password</h3>
-		enter your phone number and we'll send you a new password.
+			<%= link_to 'go here', new_user_password_path %>. reset your password via email 
 		<h3>lost phone</h3>
-		log into this site and hit unsync account, we won't send texts to your phone anymore and will reset your confirmation code
-		<h3>good god...</h3>
-		someone stole your phone and reset your password, for some diabolical reason. just call us and we'll straight up just delete your account. you can register again when you get your phone back.
+		log into this site and hit unsync account, we won't send texts to your phone
 	</div>
 </div>
+

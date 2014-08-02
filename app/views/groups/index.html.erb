@@ -1,59 +1,36 @@
 <!-- Groups Index -->
+<div class="row">
+<div class="col-sm-6">
 
-<div class="col-sm-7">
-<h1>your groups <%= link_to 'make a group', new_group_path, {:class => "pull-right btn btn-primary"} %></h1>
-
+<h1>your groups <%= button_to 'make a group', {action: 'new'}, :class => 'btn btn-primary', :method => 'get' %></h1>
 <% if current_user != nil %>
-<table class="table table-striped">
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Desc</th>
-      <th colspan="3"></th>
-    </tr>
-  </thead>
 
-  <tbody>
-    <% @mygroups.each do |group| %>
-      <tr>
-        <td><span class="badge"><%= group.name %></td></span>
-        <td><%= group.desc %></td>
-        <td><%= link_to 'Show', group %></td>
-        <td><%= link_to 'Edit', edit_group_path(group) %></td>
-        <td><%= link_to 'Destroy', group, method: :delete, data: { confirm: 'Are you sure?' } %></td>
-      </tr>
+  <div class="list-group">
+    <% @mygroups.each do |g| %>
+      <a href="<%= group_path g.id %>" class="list-group-item">
+        <span class="badge">events <%= g.events.count %></span>
+        <b><%= g.name %></b> <small><%= g.desc %></small>
+      </a>
     <% end %>
-  </tbody>
-</table>
+  </div>
+
 <% else %>
 register to make groups, join a groups, and start making alerts.
 
 <% end %>
 </div>
-<div class="col-sm-5">
+  <div class="col-sm-6">
 <h1>local groups</h1>
 
-<table class="table table-striped">
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Desc</th>
-      <th colspan="3"></th>
-    </tr>
-  </thead>
-
-  <tbody>
-    <% @publicgroups.each do |group| %>
-      <tr>
-        <td><%= group.name %></td>
-        <td><%= group.desc %></td>
-        <td><%= link_to 'Show', group %></td>
-        <td><%= link_to 'Edit', edit_group_path(group) %></td>
-        <td><%= link_to 'Destroy', group, method: :delete, data: { confirm: 'Are you sure?' } %></td>
-      </tr>
+<div class="list-group">
+    <% @publicgroups.each do |g| %>
+      <a href="<%= group_path g.id %>" class="list-group-item">
+        <span class="badge">events <%= g.events.count %></span>
+        <b><%= g.name %></b> <small><%= g.desc %></small>
+      </a>
     <% end %>
-  </tbody>
-</table>
+
+</div>
 </div>
 
 <br>

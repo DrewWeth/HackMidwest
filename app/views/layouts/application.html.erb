@@ -44,9 +44,17 @@
 	</nav>
 
 	<div class="container">
-	<div class="well" style="opacity:.87">
-		<p class="notice"><%= notice %></p>
+
+
+	<div class="well" style="opacity:.87" id="wrapper_well">
 		
+	<% if notice != nil %>
+		<div class="alert alert-info alert-dismissible" role="alert">
+		  <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+			<%= notice %>
+		</div>
+	<% end %>
+
 		<%= yield %>
 		<!-- <p class="alert"><%= alert %></p> -->
 		<hr>
@@ -66,7 +74,7 @@ $(document).ready(function(){
 	$('body').css({"background": pattern.dataUrl + " no-repeat center center fixed", "background-size": "cover"} );
 })
 </script>
-
+	
 </body>
 </html>
 

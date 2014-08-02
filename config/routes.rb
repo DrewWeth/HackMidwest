@@ -12,9 +12,14 @@ Rails.application.routes.draw do
   get 'home/about', to: 'home#about'
   get 'groups/leave/:id', to: 'groups#leave'
 
-  get 'groups/join/:id', to: 'groups#join'
+  post 'groups/join', to: 'groups#join'
   get 'groups/:id/alert', to: 'groups#alert'
   match 'checkIn' => 'events#checkIn', :as => 'checkIn', via: [:get, :post]
+
+  post 'accounts/unsync', to: 'accounts#unsync'
+  post 'accounts/remove_restrictions', to: 'accounts#remove_restrictions'
+
+
 
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".

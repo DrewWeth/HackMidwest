@@ -24,14 +24,20 @@
     <%= f.datetime_select :start,  :order => [:month, :day, :year, :hour, :minute], :class => "datepicker form-control" %>
   </div>
   <div class="field">
-    <label>ends (no more check-in after)</label>
-    <%= f.number_field :end, :class => " form-control", :min => 0, :step => 0.25, :placeholder => "event duration" %>
+    <label>dutation in hours</label>
+    <%= f.number_field :end, :class => "form-control", :min => 0, :step => 0.25, :placeholder => "event duration" %>
   </div>
   
   <div class="field">
     <label>location (google maps accurate)</label><br>
     <%= f.text_field :address, :class => "form-control" %>
   </div>
+  <div class="field">
+    <label>timezone of event</label><br>
+    <%= f.time_zone_select :timezone , nil, {:default => 'Eastern Time (US & Canada)'}, {:class => "form-control"} %>
+  </div>
+
+
   <div class="field">
     <label>when to send alerts</label>
     <select multiple class="form-control" name="alert_template">

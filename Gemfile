@@ -33,6 +33,8 @@ gem 'coffee-rails', '~> 4.0.0'
 
 gem "table_print"
 
+gem "geocoder"
+gem 'timezone', '~> 0.3.2'
 gem 'devise'
 gem 'cancan'
 gem 'rolify'
