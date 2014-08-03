@@ -19,9 +19,9 @@
     <label>description</label><br>
     <%= f.text_field :desc, :class => "form-control", :placeholder => "blerb" %>
   </div>
-  <div class="field">
+  <div class="field" id="dt_div">
     <label>starts (check-in time)</label><br>
-    <%= f.datetime_select :start,  :order => [:month, :day, :year, :hour, :minute], :class => "datepicker form-control" %>
+    <%= f.datetime_select :start,  :order => [:month, :day, :year, :hour, :minute], :class => "form-control" %>
   </div>
   <div class="field">
     <label>dutation in hours</label>
@@ -67,5 +67,4 @@
      $('#pub_label').html('private'); 
     }
   });
-
 </script>

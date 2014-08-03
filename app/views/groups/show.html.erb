@@ -6,7 +6,7 @@
     <h3><small><%= @group.desc %></small></h3>
     <% if current_user != nil and @is_member == true %>
       <%= link_to("leave", :controller => "groups", :action => "leave", :id => params[:id]) %> |
-      <%= link_to 'create Event', new_event_path %> |
+      <%= link_to 'create event', new_event_path %> |
     <% end %>
 
     <%= link_to 'edit', edit_group_path(@group) %> |
@@ -45,7 +45,7 @@
           <th>event</th>
           <th>description</th>
           <th>starts @</th>
-          <th>duration @</th>
+          <th>duration</th>
           <th>location</th>
           <th>status</th>
           <th colspan="3"></th>
@@ -57,8 +57,18 @@
         <tr>
           <td><%= event.name %></td>
           <td><%= event.desc %></td>
-          <td><%= event.start.strftime("%B %d, %Y at %I:%M %p"); %></td>
-          <td><%= event.end %></td>
+          <td>
+            <% if  ( event.start + event.end * 1.hours ).past? %>
+            <label class="label label-danger">
+            <% else %>
+            <label class="label label-success">
+
+            <% end %>
+            <%= event.start.strftime("%B %d, %Y at %I:%M %p"); %>
+
+              </label>
+          </td>
+          <td><%= event.end %> hour<% if event.end != 1 %>s<% end %></td>
           <td>
             <% if event.address != nil and event.address .to_s != '' %>
             <%= event.address %>
