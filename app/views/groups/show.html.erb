@@ -1,101 +1,120 @@
-
+<script src="//cdn.datatables.net/1.10.2/js/jquery.dataTables.min.js"></script>
 <div class="row">
   <div class="col-sm-6">
 
     <h1><%= @group.name %></h1>
     <h3><small><%= @group.desc %></small></h3>
-    <% if current_user != nil and @is_member == true %>
-      <%= link_to("leave", :controller => "groups", :action => "leave", :id => params[:id]) %> |
-      <%= link_to 'create event', new_event_path %> |
-    <% end %>
 
-    <%= link_to 'edit', edit_group_path(@group) %> |
+    <br>
     <%= link_to 'back', groups_path %>
+    <% if current_user != nil and @is_member == true %>
+    | <%= link_to("leave", :controller => "groups", :action => "leave", :id => params[:id]) %>
+    | <%= link_to 'create event', new_event_path %>
+    <% end %>
+    <% if current_user != nil and @owner.id == current_user.id %>
+    | <%= link_to 'edit', edit_group_path(@group) %>
+    <% end %>
+    <br><small><%= link_to @owner.email, @owner %></small>
 
   </div>
   <div class="col-sm-6">
-    <% if current_user != nil and @is_member == false  %>
+    <% if @is_member == false  %>
     <div class="pull-right">
       <form action="/groups/join" class="form-inline" method="post">
-      <%= token_tag %>
-        
+        <%= token_tag %>
+
         <div class="form-group">
-          <input id="req_id" class="form-control" placeholder="password to join" name="request_string" type="text" /><br />
-         </div>
-          <input id="group_id" name="group_id" type="hidden" value="<%= params[:id] %>">
+          <input id="req_id" class="form-control" placeholder="password to join" name="request_string" type="password" /><br />
+        </div>
+        <input id="group_id" name="group_id" type="hidden" value="<%= params[:id] %>">
         <div class="form-group">
-          
+
           <input class="btn btn-default" type="submit" value="join" />
-          </div>
         </div>
       </form>
     </div>
-    <% end %>
+    <% elsif current_user != nil and @is_member %>
+    <h3>Members <span class="badge"><%= @members.count %></span></h3>
+    <table class="table table-hover">
+      <% @members.each do |m| %>
+      <tr>
+        <td>
+          <%= link_to m.email, m %>
+        </td>
+        <td>
+          <span class="glyphicon glyphicon-trash"></span>
 
-  </div>
-</div>
-<hr>
-<div class="row">
-  <div class="col-sm-12">
-    <% if !@events.empty? %>
-    <h3>scheduled events</h3>
-    <table class="table table-striped">
-      <thead>
-        <tr>
-          <th>event</th>
-          <th>description</th>
-          <th>starts @</th>
-          <th>duration</th>
-          <th>location</th>
-          <th>status</th>
-          <th colspan="3"></th>
-        </tr>
-      </thead>
-
-      <tbody>
-        <% @events.each do |event| %>
-        <tr>
-          <td><%= event.name %></td>
-          <td><%= event.desc %></td>
-          <td>
-            <% if  ( event.start + event.end * 1.hours ).past? %>
-            <label class="label label-danger">
-            <% else %>
-            <label class="label label-success">
-
-            <% end %>
-            <%= event.start.strftime("%B %d, %Y at %I:%M %p"); %>
-
-              </label>
-          </td>
-          <td><%= event.end %> hour<% if event.end != 1 %>s<% end %></td>
-          <td>
-            <% if event.address != nil and event.address .to_s != '' %>
-            <%= event.address %>
-            <% else %>
-            not specified
-            <% end %>
-          </td>
-          <td>
-            <% if event.is_public == true %>
-            <span class="label label-success">public</span>
-            <% else %>
-            <span class="label label-danger">private</span>
-            <% end %>
-          </td>
-          
-          <td><%= link_to 'Show', event %></td>
-          <td><%= link_to 'Edit', edit_event_path(event) %></td>
-          <td><%= link_to 'Destroy', event, method: :delete, data: { confirm: 'Are you sure?' } %></td>
-        </tr>
-        <% end %>
-      </tbody>
+        </td>
+      </tr>
+      
+      <% end %>
     </table>
-    <% else %>
-    no upcoming events. make one!
     <% end %>
   </div>
 </div>
+  <div class="row">
+
+      <div class="col-sm-12">
+        <h3>scheduled events</h3>
+        <% if !@events.empty? %>
+
+        <table class="table table-striped table-bordered" id="events">
+          <thead>
+            <tr>
+              <th>event</th>
+              <th>description</th>
+              <th>starts @</th>
+              <th>duration</th>
+              <th>location</th>
+              <th>status</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <% @events.each do |event| %>
+            <tr>
+              <td><%= link_to event.name, event %></td>
+              <td><%= event.desc %></td>
+              <td>
+                <% if  ( event.start + event.end * 1.hours ).past? %>
+                <label class="label label-danger">
+                  <% else %>
+                  <label class="label label-success">
+                    <% end %>
+                    <%= event.start.strftime("%b %d, %y at %I:%M %p"); %>
+
+                  </label>
+                </td>
+                <td><%= event.end %> hour<% if event.end != 1 %>s<% end %></td>
+                <td>
+                  <% if event.address != nil and event.address .to_s != '' %>
+                  <%= event.address %>
+                  <% else %>
+                  not specified
+                  <% end %>
+                </td>
+                <td>
+                  <% if event.is_public == true %>
+                  <span class="label label-success">public</span>
+                  <% else %>
+                  <span class="label label-danger">private</span>
+                  <% end %>
+                </td>
+
+              </tr>
+              <% end %>
+            </tbody>
+          </table>
+          <% else %>
+          no upcoming events. make one!
+          <% end %>
+        </div>
+      </div>
+
+      <script>
+        $('#events').dataTable();
+
+      </script>
 
 
 

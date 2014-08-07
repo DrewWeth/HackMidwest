@@ -1,0 +1,59 @@
+<div class="row">
+<div class="col-sm-6">
+<h1>user details</h1>
+
+<% if @intersect.any? %>
+<table class="table table-bordered table-striped">
+	<tr>
+		<td>
+			email
+		</td>
+		<td>
+			<%= @user.email %>
+		</td>
+	</tr>
+	<tr>
+		<td>phone</td>
+		<td>
+			<%= number_to_phone(@user.phone_num, delimiter: ".", country_code: 1) %>
+		</td>
+	</tr>
+	<tr>
+		<td>
+			country
+		</td>
+		<td>
+			<%= @user.country %>
+		</td>
+	</tr>
+	<tr>
+		<td>
+			last active
+		</td>
+		<td>
+			<%= @user.last_sign_in_at %>
+		</td>
+	</tr>
+</table>
+<% else %>
+	to prevent spamming we only display a user's info if you are in a group with them
+<% end %>
+
+</div>
+<div class="col-sm-6">
+<h3>user's memberships</h3>
+<table>
+<% @groups.each do |g| %>
+	<tr>
+	<td>
+	<%= link_to g.name, g %>
+	</td>
+	</tr>
+<% end %>
+</table>
+</div>
+</div>
+</div>
+
+<br>
+<%= link_to 'back', :back %>

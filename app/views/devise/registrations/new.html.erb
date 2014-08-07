@@ -9,11 +9,13 @@
   <div><%= f.label :password %><br />
     <%= f.password_field :password, autocomplete: "off", :placeholder => "password", :class => "form-control" %></div>
 
-  <div><%= f.label :password_confirmation %><br />
-    <%= f.password_field :password_confirmation, autocomplete: "off", :placeholder => "confirm password", :class => "form-control" %></div>
-    
+
   <div><%= f.label :phone_num %><br />
     <%= f.telephone_field :phone_num, :placeholder => "phone number (include area code)", :class => "form-control" %></div>
+    
+  <div><%= f.label :country %><br>
+  <%= f.number_field :country, :class => "form-control" %>
+
 
 
     <label>Submit</label>

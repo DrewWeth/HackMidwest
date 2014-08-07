@@ -15,15 +15,19 @@ class GroupsController < ApplicationController
   # GET /groups/1
   # GET /groups/1.json
   def show
+    group = Group.find(params[:id])
+    @owner = User.find(group.user_id)
+    @is_member = false
+    
     if current_user != nil
-      @events = Group.find(params[:id]).events
-      selected_group = Group.find(params[:id])
+    
+      @events = group.events
+      @members = group.users
 
+      selected_group = Group.find(params[:id])
       memberships = User.find(current_user.id).groups
       if memberships.include?(selected_group)
         @is_member = true
-      else
-        @is_member = false
       end
       session[:group_id] = params[:id]
     else
@@ -150,6 +154,7 @@ class GroupsController < ApplicationController
   # POST /groups.json
   def create
     @group = Group.new(group_params)
+    @group.user_id = current_user.id
     
     respond_to do |format|
       if @group.save
@@ -157,6 +162,7 @@ class GroupsController < ApplicationController
         membership.user_id = current_user.id
         membership.group_id = @group.id
         membership.save
+
         
         format.html { redirect_to @group, notice: 'group was successfully created.' }
         format.json { render :show, status: :created, location: @group }

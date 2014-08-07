@@ -7,19 +7,27 @@ Rails.application.routes.draw do
   resources :groups
 
   devise_for :users
+
+  resources :users
+
   
+  # Home
   root to: "home#index"
   get 'home/about', to: 'home#about'
-  get 'groups/leave/:id', to: 'groups#leave'
 
+  # Groups
+  get  'groups/leave/:id', to: 'groups#leave'
   post 'groups/join', to: 'groups#join'
-  get 'groups/:id/alert', to: 'groups#alert'
+  get  'groups/:id/alert', to: 'groups#alert'
+
+  # Confirmation
   match 'checkIn' => 'events#checkIn', :as => 'checkIn', via: [:get, :post]
 
+  # Accounts
   post 'accounts/unsync', to: 'accounts#unsync'
   post 'accounts/remove_restrictions', to: 'accounts#remove_restrictions'
 
-
+  
 
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".

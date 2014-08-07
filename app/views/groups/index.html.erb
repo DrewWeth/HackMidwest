@@ -1,41 +1,53 @@
 <!-- Groups Index -->
 <div class="row">
-<div class="col-sm-6">
-
-<h1>your groups</h1>
-<% if current_user != nil %>
-
-  <div class="list-group">
-    <% @mygroups.each do |g| %>
-      <a href="<%= group_path g.id %>" class="list-group-item">
-        <span class="badge">events <%= g.events.count %></span>
-        <b><%= g.name %></b> <small><%= g.desc %></small>
-      </a>
-    <% end %>
-  </div>
-
-<% else %>
-register to make groups, join a groups, and start making alerts.
-
-<% end %>
-<%= button_to 'make a group', {action: 'new'}, :class => 'btn btn-primary', :method => 'get' %>
-</div>
   <div class="col-sm-6">
-<h1>local groups</h1>
 
-<div class="list-group">
-    <% @publicgroups.each do |g| %>
+    <h1>your groups 
+</h1>
+    <% if current_user != nil %>
+
+    <div class="list-group">
+    <% if @mygroups.any? %>
+      <% @mygroups.each do |g| %>
+        <a href="<%= group_path g.id %>" class="list-group-item">
+          <span class="badge">events <%= g.events.count %></span>
+          <b><%= g.name %></b> <small><%= g.desc %></small>
+        </a>
+      <% end %>
+    <% else %>
+      you are you in any groups. join or make one.
+    <% end %>
+    <hr>
+      <%= button_to 'make a group', {action: 'new'}, :class => 'btn btn-sm btn-primary', :method => 'get' %>
+    </div>
+
+    <% else %>
+    register to make groups, join a groups, and start making alerts.
+
+    <% end %>
+    <br>
+  </div>
+  <div class="col-sm-6">
+    <h1>local groups</h1>
+
+    <div class="list-group">
+    <% if @publicgroups.any? %>
+      <% @publicgroups.each do |g| %>
       <a href="<%= group_path g.id %>" class="list-group-item">
         <span class="badge">events <%= g.events.count %></span>
         <b><%= g.name %></b> <small><%= g.desc %></small>
       </a>
-    <% end %>
+      <% end %>
+      <% else %>
+      there are no groups around you. make one!
+      <% end %>
 
-</div>
+    </div>
+  </div>
 </div>
 
-<br>
+  <br>
 
 
 <!-- <div id="map-canvas"/>
- -->
+-->

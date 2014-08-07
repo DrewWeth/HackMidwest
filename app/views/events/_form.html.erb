@@ -33,7 +33,7 @@
     <%= f.text_field :address, :class => "form-control" %>
   </div>
   <div class="field">
-    <label>timezone of event</label><br>
+    <label>timezone <small>recalculated based on location</small></label><br>
     <%= f.time_zone_select :timezone , nil, {:default => 'Eastern Time (US & Canada)'}, {:class => "form-control"} %>
   </div>
 

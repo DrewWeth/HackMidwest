@@ -32,7 +32,7 @@
 
 				<ul class="nav navbar-nav navbar-right">
 					<% if user_signed_in? %>
-					<li><%= link_to 'cell '+current_user.phone_num, edit_user_registration_path %></li>
+					<li><%= link_to number_to_phone(current_user.phone_num, delimiter: ".", country_code: current_user.country), edit_user_registration_path %></li>
 					<li><%= link_to '/logout', destroy_user_session_path, :method => :delete %></li>
 					<% else %>
 					<li><%= link_to 'sign in', new_user_session_path %></li>
@@ -43,10 +43,10 @@
 		</div><!-- /.container-fluid -->
 	</nav>
 
-	<div class="container">
+	<div class="container-fluid">
 
 
-	<div class="well" style="opacity:.87" id="wrapper_well">
+	<div class="well" style="opacity:.87">
 		
 	<% if notice != nil %>
 		<div class="alert alert-info alert-dismissible" role="alert">

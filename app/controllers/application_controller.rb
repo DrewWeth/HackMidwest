@@ -18,13 +18,16 @@ class ApplicationController < ActionController::Base
 		end
 	end
 	def configure_devise_permitted_parameters
-		registration_params = [:phone_num, :password, :password_confirmation, :email]
+		registration_params = [:country, :phone_num, :password, :password_confirmation, :email, :current_password]
 
-		if params[:action] == 'create'
-		  devise_parameter_sanitizer.for(:sign_up) { 
-		    |u| u.permit(registration_params) 
-		  }
-		end
+		devise_parameter_sanitizer.for(:sign_up) { 
+			|u| u.permit(registration_params) 
+		}
+		devise_parameter_sanitizer.for(:account_update) { 
+			|u| u.permit(registration_params) 
+		}
+
+			
 	end
 
   # Prevent CSRF attacks by raising an exception.

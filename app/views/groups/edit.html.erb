@@ -27,11 +27,13 @@
     <%= f.check_box :desc, :class => "form-control" %> 
   </div>
   
-
   <div class="actions">
     <%= f.submit 'save', :class => "btn btn-primary form-control" %>
   </div>
 <% end %>
+<div class="field">
+  <%= button_to 'destroy group', @group, method: :delete, :class => "btn btn-sm btn-danger pull-right", data: { confirm: "Are you sure?! This cannot be undone." } %>
+  </div>
 </div>
 
 <script type="text/javascript">

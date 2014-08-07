@@ -1,9 +1,10 @@
-<div class="inline pull-right" style="margin-top:-20px">
-  users <%= @users %> | groups <%= @groups %> | events <%= @events %> | alerts <%= @alerts %>
+<div class="inline pull-right" style="margin-top:-10px">
+  usr <%= @users %> | grp <%= @groups %> | evnt <%= @events %> | alrt <%= @alerts %>
 </div>
 <div class="row">
- <div class="container"><h1 class="inline" style="font-size:400%;font-family:Helvetica;font-weight:100;"><%= BRAND_NAME %> </h1><h2 class="inline"><small>text & gps alerts</small></h2>
- </div>
+  <div class="col-sm-12">
+ <h1 class="inline" style="font-size:400%;font-family:Helvetica;font-weight:100;"><%= BRAND_NAME %> </h1><h2 class="inline"><small>text & gps alerts</small></h2>
+  </div>
 </div>
 <div class="row">
  <div class="col-sm-6">
@@ -21,6 +22,11 @@
     </div>
       <div><%= f.label :phone_num %><br />
         <%= f.telephone_field :phone_num, :placeholder => "phone number (include area code)", :class => "form-control" %></div>
+
+  <div><%= f.label :country %><br>
+  <%= f.number_field :country, :class => "form-control" %>
+</div>
+
 
 
         <label>Submit</label>

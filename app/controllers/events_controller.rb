@@ -38,9 +38,15 @@ class EventsController < ApplicationController
   def show
     @events = Event.find(params[:id])
     @group = Group.find(@events.group_id)
-    
+    @owner = User.find(@events.user_id)
     @all_alerts = @events.alerts  # sent alerts i.e. not deletable
     
+    zone = Time.find_zone(@events.timezone)
+    offset = zone.formatted_offset        # => "-06:00"
+
+    @local_time = @events.start
+    
+
     @has_attended = false
     if current_user != nil
       confirmation_list = Confirmation.where(:user_id => current_user.id).where(:event_id => params[:id]).take
@@ -104,76 +110,84 @@ class EventsController < ApplicationController
   # POST /events
   # POST /events.json
   def create
-    @event = Event.new(event_params)
-    back_up_event = @event
-    @event.group_id = session[:group_id]
+    if current_user != nil
+      @event = Event.new(event_params)
+      
+      # Custom values
+      @event.group_id = session[:group_id]
+      group_for_event = Group.find(@event.group_id)
+      @event.user_id = current_user.id
 
-    group_for_event = Group.find(@event.group_id)
+      respond_to do |format|
+        if @event.save
+          # Redo time zone stuff
 
-    respond_to do |format|
-      if @event.save
-        # Redo time zone stuff
+          event_instance_for_tz = Event.find(@event.id)
+          # events_tz = Timezone::Zone.new :latlon => [@event.latitude, @event.longitude] # Get timezone of address
+          event_instance_for_tz.timezone = 'EST' # events_tz.zone
+          # event_instance_for_tz.start = event_instance_for_tz.start.in_time_zone(events_tz.zone)
 
-        event_instance_for_tz = Event.find(@event.id)
-        # events_tz = Timezone::Zone.new :latlon => [@event.latitude, @event.longitude] # Get timezone of address
-        event_instance_for_tz.timezone = 'EST' # events_tz.zone
-        # event_instance_for_tz.start = event_instance_for_tz.start.in_time_zone(events_tz.zone)
+          event_instance_for_tz.save
 
-        event_instance_for_tz.save
+          # if params[:alert_template] == '1'
+          #   arr_alerts = [72, 24, 0] # Alerts are in hours away
+           if params[:alert_template] == '2'
+            arr_alerts = [24, 3, 0] # Alerts are in hours away
+          elsif params[:alert_template] == '3'
+            arr_alerts = [3, 0] # Alerts are in hours away
+          else params[:alert_template] == '4'
+            arr_alerts = [0] # Alerts are in hours away
+          end
+          # has to be after event.save to be assigned a PK
+          url_string = root_url + "confirmations/new?user_id=" + current_user.id.to_s + "&event_id=" + @event.id.to_s
 
-        # if params[:alert_template] == '1'
-        #   arr_alerts = [72, 24, 0] # Alerts are in hours away
-         if params[:alert_template] == '2'
-          arr_alerts = [24, 3, 0] # Alerts are in hours away
-        elsif params[:alert_template] == '3'
-          arr_alerts = [3, 0] # Alerts are in hours away
-        else params[:alert_template] == '4'
-          arr_alerts = [0] # Alerts are in hours away
-        end
-        # has to be after event.save to be assigned a PK
-        url_string = root_url + "confirmations/new?user_id=" + current_user.id.to_s + "&event_id=" + @event.id.to_s
+          # Dev notes
+          # ---------
+          # Since everything is based around Alerts, only the alert sendtime is kept in servertime
+          # Alert server time is calculated with event's start datetime and timezone
+          # Event times should be kept in local times.
+          # initial alert
 
-        # Dev notes
-        # ---------
-        # Since everything is based around Alerts, only the alert sendtime is kept in servertime
-        # Alert server time is calculated with event's start datetime and timezone
-        # Event times should be kept in local times.
-        # initial alert
-
-        alert = Alert.new
-        alert.event_id = @event.id
-        alert.send_datetime = Time.now
-        alert.body = group_for_event.name + "'s event, " + @event.name + ", is on " + @event.start.strftime("%B %d, %Y at %I:%M %p")
-        alert.save
-
-        # 'temporal alerts'
-        arr_alerts.each do |a|
           alert = Alert.new
           alert.event_id = @event.id
-
-          alert.send_datetime = @event.start.in_time_zone a.hours # set time from start to do send
-
-          if a == 0
-            alert.is_event_start = true
-            alert.body = group_for_event.name + "'s event, " + @event.name + ", has started!. Sign in here: " + url_string
-          else
-            log.is_event_start = false
-            if a <= 24
-              alert.body = group_for_event.name + "'s event, " + @event.name + ", starts in " + a.to_s + " hours."
-            else
-              alert.body = group_for_event.name + "'s event, " + @event.name + ", starts in " + ((a/1.day).to_s) + " days."
-            end
-          end    
+          alert.send_datetime = Time.now
+          alert.body = group_for_event.name + "'s event, " + @event.name + ", is on " + @event.start.strftime("%B %d, %Y at %I:%M %p")
           alert.save
+
+          # 'temporal alerts'
+          arr_alerts.each do |a|
+            alert = Alert.new
+            alert.event_id = @event.id
+
+            alert.send_datetime = @event.start.in_time_zone a.hours # set time from start to do send
+
+            if a == 0
+              alert.is_event_start = true
+              alert.body = group_for_event.name + "'s event, " + @event.name + ", has started!. Sign in here: " + url_string
+            else
+              alert.is_event_start = false
+              if a <= 24
+                alert.body = group_for_event.name + "'s event, " + @event.name + ", starts in " + a.to_s + " hours."
+              else
+                alert.body = group_for_event.name + "'s event, " + @event.name + ", starts in " + ((a/1.day).to_s) + " days."
+              end
+            end    
+            alert.save
+          end
+
+          
+
+          format.html { redirect_to @event, notice: 'event was successfully created' }
+          format.json { render :show, status: :created, location: @event }
+        else
+          format.html { render :new }
+          format.json { render json: @event.errors, status: :unprocessable_entity }
         end
-
-        
-
-        format.html { redirect_to @event, notice: 'Event was successfully created.' }
-        format.json { render :show, status: :created, location: @event }
-      else
-        format.html { render :new }
-        format.json { render json: @event.errors, status: :unprocessable_entity }
+      end
+    else
+      respond_to do |format|
+        format.html { redirect_to root_path, notice: 'must be logged in to make event' }
+        format.json { render :show, status: :created, location: root_path }
       end
     end
   end
@@ -183,7 +197,7 @@ class EventsController < ApplicationController
   def update
     respond_to do |format|
       if @event.update(event_params)
-        format.html { redirect_to @event, notice: 'Event was successfully updated.' }
+        format.html { redirect_to @event, notice: 'event was successfully updated' }
         format.json { render :show, status: :ok, location: @event }
       else
         format.html { render :edit }
@@ -211,6 +225,6 @@ class EventsController < ApplicationController
     # Never trust parameters from the scary internet, only allow the white list through.
     def event_params
 
-      params.require(:event).permit(:name, :desc, :start, :end, :location, :address, :latitude, :longitude, :is_public, :group_id)
+      params.require(:event).permit(:name, :desc, :start, :end, :location, :address, :latitude, :longitude, :is_public, :group_id, :duration, :timezone)
     end
   end

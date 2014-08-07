@@ -11,7 +11,6 @@ class AlertsController < ApplicationController
   # GET /alerts/1.json
   def show
     @event = Alert.find(params[:id])
-
   end
 
   # GET /alerts/new
