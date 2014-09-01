@@ -1,5 +1,8 @@
 class EventsController < ApplicationController
+
+
   before_action :set_event, only: [:show, :edit, :update, :destroy]
+
 
   # GET /events
   # GET /events.json
@@ -113,25 +116,27 @@ class EventsController < ApplicationController
     if current_user != nil
       @event = Event.new(event_params)
       
-      # Custom values
+      # Get group for event
       @event.group_id = session[:group_id]
       group_for_event = Group.find(@event.group_id)
+
+      # Set event owner to current user
       @event.user_id = current_user.id
+
+      @event.start = @event.start.in_time_zone(@event.timezone)
+      
+      
 
       respond_to do |format|
         if @event.save
-          # Redo time zone stuff
-
-          event_instance_for_tz = Event.find(@event.id)
-          # events_tz = Timezone::Zone.new :latlon => [@event.latitude, @event.longitude] # Get timezone of address
-          event_instance_for_tz.timezone = 'EST' # events_tz.zone
-          # event_instance_for_tz.start = event_instance_for_tz.start.in_time_zone(events_tz.zone)
-
-          event_instance_for_tz.save
-
+          
+          offset_num = Time.zone_offset(@event.timezone)
+          @event.start -= offset_num
+          @event.save
+          
           # if params[:alert_template] == '1'
           #   arr_alerts = [72, 24, 0] # Alerts are in hours away
-           if params[:alert_template] == '2'
+          if params[:alert_template] == '2'
             arr_alerts = [24, 3, 0] # Alerts are in hours away
           elsif params[:alert_template] == '3'
             arr_alerts = [3, 0] # Alerts are in hours away
@@ -159,7 +164,7 @@ class EventsController < ApplicationController
             alert = Alert.new
             alert.event_id = @event.id
 
-            alert.send_datetime = @event.start.in_time_zone a.hours # set time from start to do send
+            alert.send_datetime = @event.start.in_time_zone + a.hours # set time from start to do send
 
             if a == 0
               alert.is_event_start = true
@@ -227,4 +232,7 @@ class EventsController < ApplicationController
 
       params.require(:event).permit(:name, :desc, :start, :end, :location, :address, :latitude, :longitude, :is_public, :group_id, :duration, :timezone)
     end
+
+
+
   end

@@ -19,7 +19,6 @@ end
 group :production do
   # Postgres for heroku
   gem 'pg'
- 
 end
 
 gem 'country_select'

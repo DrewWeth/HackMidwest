@@ -43,37 +43,37 @@
 		</div><!-- /.container-fluid -->
 	</nav>
 
-	<div class="container-fluid">
+	<div class="container">
 
 
-	<div class="well" style="opacity:.87">
-		
-	<% if notice != nil %>
-		<div class="alert alert-info alert-dismissible" role="alert">
-		  <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-			<%= notice %>
-		</div>
-	<% end %>
+		<div class="well" style="opacity:.87">
+			
+			<% if notice != nil %>
+			<div class="alert alert-info alert-dismissible" role="alert">
+				<button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+				<%= notice %>
+			</div>
+			<% end %>
 
-		<%= yield %>
-		<!-- <p class="alert"><%= alert %></p> -->
-		<hr>
-		<a href="/"><%= Time.now %></a>
+			<%= yield %>
+			<!-- <p class="alert"><%= alert %></p> -->
+			<hr>
+			<a href="/"><%= Time.zone.now %></a>
 		</div>
 	</div>
 
-<script>
-$('.dropdown-toggle').dropdown()
-</script>
+	<script>
+		$('.dropdown-toggle').dropdown()
+	</script>
 
-<script>
-$(document).ready(function(){
+	<script>
+		$(document).ready(function(){
 
-	var t = new Trianglify({noiseIntensity: 0, strokeOpacity: Math.random(), fillOpacity: Math.random()});
-	var pattern = t.generate(window.innerWidth, window.innerHeight);
-	$('body').css({"background": pattern.dataUrl + " no-repeat center center fixed", "background-size": "cover"} );
-})
-</script>
+			var t = new Trianglify({noiseIntensity: 0, strokeOpacity: Math.random(), fillOpacity: Math.random()});
+			var pattern = t.generate(window.innerWidth, window.innerHeight);
+			$('body').css({"background": pattern.dataUrl + " no-repeat center center fixed", "background-size": "cover"} );
+		})
+	</script>
 	
 </body>
 </html>
