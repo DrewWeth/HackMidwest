@@ -11,7 +11,6 @@ module HackMidwest
     
     class Application < Rails::Application
         config.time_zone = "UTC"
-        config.assets.initialize_on_precompile = false
 
         Timezone::Configure.begin do |c|    
           c.username = 'drewweth'
