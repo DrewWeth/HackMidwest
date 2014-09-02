@@ -6,7 +6,7 @@ class Event < ActiveRecord::Base
 	# validations
 	validates :name, presence: true
 	validates :start, presence: true
-	validates :end, presence: true 
+	validates :duration, presence: true 
 	validates :address, presence: true 
 
 	# geocode

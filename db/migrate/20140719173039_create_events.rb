@@ -4,7 +4,7 @@ class CreateEvents < ActiveRecord::Migration
       t.string :name
       t.string :desc
       t.datetime :start
-      t.datetime :end
+      t.datetime :duration
       t.string :location
       t.boolean :is_public
 
