@@ -3,7 +3,7 @@ class Group < ActiveRecord::Base
 	has_many :memberships
 	
 
-	has_many :events
+	has_many :events, dependent: :destroy 
 
 	validates :name, presence: true 
 

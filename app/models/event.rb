@@ -1,7 +1,7 @@
 class Event < ActiveRecord::Base
 	# active record
 	belongs_to :group
-	has_many :alerts	
+	has_many :alerts, dependent: :destroy 
 
 	# validations
 	validates :name, presence: true
