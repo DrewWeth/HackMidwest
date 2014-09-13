@@ -20,7 +20,7 @@
         <% elsif minutes_until <= 60 %>
           in <%= minutes_until.round %> minutes       
         <% elsif days_until < 1 %>
-          in <%= ((days_until * 1.days) / 1.hours) %> hours
+          in <%= ((days_until * 1.days) / 1.hours).round %> hours
         <% elsif days_until < 3 %>
           in <%= days_until %> days
         <% else %>
@@ -29,7 +29,7 @@
 
       </small>
       <br>
-      |<% if !event.desc.empty? %>
+      <% if !event.desc.empty? %>
       <%= event.desc %>
       <% else %>
       no description
@@ -53,7 +53,7 @@
     <td>
      <%= link_to event.name, event %>
       <% time_until = ((event.start - time_now) / 1.days) %>
-      <% event_end = (event.start + ( event.end * 1.hours)) %>
+      <% event_end = (event.start + ( event.duration * 1.hours)) %>
       <small class="pull-right">
         <% if time_now >= event.start and time_now <= event_end %>
           <% link_to 'CHECK IN!', event %> 

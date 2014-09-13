@@ -14,7 +14,7 @@
     <% if current_user != nil and @owner.id == current_user.id %>
     | <%= link_to 'edit', edit_group_path(@group) %>
     <% end %>
-    <br><small><%= link_to @owner.email, @owner %></small>
+    <br><small>moderator <%= link_to @owner.email, @owner %></small>
 
   </div>
   <div class="col-sm-6">
@@ -34,19 +34,18 @@
       </form>
     </div>
     <% elsif current_user != nil and @is_member %>
-    <h3>Members <span class="badge"><%= @members.count %></span></h3>
+    <h3>members <span class="badge"><%= @members.count %></span></h3>
     <table class="table table-hover">
       <% @members.each do |m| %>
       <tr>
         <td>
-          <%= link_to m.email, m %>
-        </td>
-        <td>
-          <span class="glyphicon glyphicon-trash"></span>
 
+          <%= link_to m.email, m %>
+          <% if m.id == @owner.id %>
+           <label class="label label-success">moderator</label>
+          <% end %>
         </td>
       </tr>
-      
       <% end %>
     </table>
     <% end %>

@@ -27,7 +27,7 @@ Rails.application.routes.draw do
   post 'accounts/unsync', to: 'accounts#unsync'
   post 'accounts/remove_restrictions', to: 'accounts#remove_restrictions'
 
-  
+  post 'groups/remove/:id', to: 'groups#remove'
 
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".

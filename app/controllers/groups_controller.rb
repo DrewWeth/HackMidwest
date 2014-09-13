@@ -100,7 +100,24 @@ class GroupsController < ApplicationController
 
   # GET /groups/1/edit
   def edit
+    @members = @group.users
   end
+
+  def remove
+    group = Group.find(params[:id])
+    # decrements member count and if no one is in it, then make it inactive
+    if group.owner != current_user.id
+      group.member_count -= 1
+      if group.member_count == 0
+        group.is_active = false
+      end
+      group.save
+      member = Membership.where(user_id: @user_to_remove).where(group_id: params[:id]).take
+      Membership.delete(member.id)
+    end
+    redirect_to request.referer
+  end
+
 
   def notify_all
     Group.find(params[:id])

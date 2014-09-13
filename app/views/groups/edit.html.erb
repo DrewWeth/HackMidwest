@@ -22,10 +22,24 @@
     </div>
   <% end %>
   
-  <div class="field">
-    <label>members can make events?</label>
-    <%= f.check_box :desc, :class => "form-control" %> 
-  </div>
+  
+  <h3>member management <span class="badge"><%= @members.count %></span></h3>
+    <table class="table table-hover">
+      <% @members.each do |m| %>
+      <tr>
+        <td>
+          <%= link_to m.email, m %>
+        </td>
+        <td>
+          <%= link_to(:controller => "groups", :action => "leave", :id => params[:id]) do %>
+
+          <span class="glyphicon glyphicon-trash"></span>
+          <% end %>
+        </td>
+      </tr>
+      
+      <% end %>
+    </table>
   
   <div class="actions">
     <%= f.submit 'save', :class => "btn btn-primary form-control" %>

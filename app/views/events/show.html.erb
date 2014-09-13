@@ -1,3 +1,4 @@
+
 <div class="row">
     <div class="col-sm-6">
       <h1><%= @event.name %> 
@@ -28,7 +29,7 @@
             start
           </td>
           <td> 
-			<%= Time.strptime(@event.start.to_s, '%M %S').in_time_zone(@zone.name) %>
+			     <%= @event.start.in_time_zone(@zone.name).strftime("%B %d, %Y at %I:%M %p") %>
           </td>
         </tr>
         <tr>
@@ -109,7 +110,9 @@
           <tbody>
             <% @all_alerts.each do |alert| %>
             <tr>
-              <td><%= alert.send_datetime.strftime("%B %d, %Y at %I:%M %p"); %></td>
+              <td>
+                <%= alert.send_datetime.in_time_zone(@zone.name).strftime("%B %d, %Y at %I:%M %p") %>
+              </td>
               <td>
                 <% if alert.is_sent == true %>
                 <label class="label label-success">sent</label>

@@ -1,5 +1,3 @@
-<fb:login-button scope="public_profile,email,user_friends" onlogin="checkLoginState();">
-</fb:login-button>
 
 <div id="status"></div>
 
@@ -11,7 +9,7 @@
 			e = Event.find(params[:event_id])
 			e[:name]
 		end
-	%>	Check in
+	%>	<small>check in</small>
 </h1>
 
 <% if params[:event_id].present?

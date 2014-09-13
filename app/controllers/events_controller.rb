@@ -115,7 +115,7 @@ class EventsController < ApplicationController
       @event.user_id = current_user.id
       
       zone = ActiveSupport::TimeZone.new(@event.timezone) # Make new timezone for the event
-      o = zone.utc_offset # Get offset of events zone      
+      o = zone.utc_offset + 1.hour # Get offset of events zone      
       @event.start = @event.start - o # Offset by the timezone
 
       respond_to do |format|
@@ -150,7 +150,7 @@ class EventsController < ApplicationController
             alert = Alert.new
             alert.event_id = @event.id
 
-            alert.send_datetime = @event.start.in_time_zone + a.hours # set time from start to do send
+            alert.send_datetime = @event.start.in_time_zone - a.hours # set time from start to do send
 
             if a == 0
               alert.is_event_start = true
