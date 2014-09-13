@@ -1,1 +1,1 @@
-BRAND_NAME = 'u:nify'
+BRAND_NAME = 'Unify'
