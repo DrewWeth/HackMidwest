@@ -34,7 +34,7 @@ ActiveRecord::Schema.define(version: 20140803172425) do
     t.string   "name"
     t.string   "desc"
     t.datetime "start"
-    t.float    "end"
+    t.float    "duration"
     t.string   "location"
     t.boolean  "is_public"
     t.datetime "created_at"

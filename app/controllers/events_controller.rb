@@ -16,7 +16,7 @@ class EventsController < ApplicationController
       # written at 2:43am. this seems super inefficient
       groups.each do |g|
         g.events.each do |e|
-          if !((e.start + ( 1.hours * e.end)).past?)
+          if !((e.start + ( 1.hours * e.duration)).past?)
             # (e.start - time)/1.days >= 0
             @events.push(e)
           end
@@ -39,17 +39,14 @@ class EventsController < ApplicationController
   # GET /events/1
   # GET /events/1.json
   def show
+
     @events = Event.find(params[:id])
     @group = Group.find(@events.group_id)
     @owner = User.find(@events.user_id)
     @all_alerts = @events.alerts  # sent alerts i.e. not deletable
+    @zone = ActiveSupport::TimeZone.new(@events.timezone) # Make new timezone for the event
     
-    zone = Time.find_zone(@events.timezone)
-    offset = zone.formatted_offset        # => "-06:00"
-
-    @local_time = @events.start
     
-
     @has_attended = false
     if current_user != nil
       confirmation_list = Confirmation.where(:user_id => current_user.id).where(:event_id => params[:id]).take
@@ -58,12 +55,6 @@ class EventsController < ApplicationController
       end
     end
     session[:event_id] = params[:id]
-    
-    
-
-
-    @serv_time = @events.start
-
 
   end
 
@@ -122,18 +113,13 @@ class EventsController < ApplicationController
 
       # Set event owner to current user
       @event.user_id = current_user.id
-
-      @event.start = @event.start.in_time_zone(@event.timezone)
       
-      
+      zone = ActiveSupport::TimeZone.new(@event.timezone) # Make new timezone for the event
+      o = zone.utc_offset # Get offset of events zone      
+      @event.start = @event.start - o # Offset by the timezone
 
       respond_to do |format|
         if @event.save
-          
-          offset_num = Time.zone_offset(@event.timezone)
-          @event.start -= offset_num
-          @event.save
-          
           # if params[:alert_template] == '1'
           #   arr_alerts = [72, 24, 0] # Alerts are in hours away
           if params[:alert_template] == '2'

@@ -13,7 +13,7 @@
       <% days_until = ((event.start - time_now) / 1.days) %>
       <% minutes_until = ((event.start - time_now) / 1.minutes) %>
 
-      <% event_end = (event.start + ( event.end * 1.hours)) %>
+      <% event_end = (event.start + ( event.duration * 1.hours)) %>
       <small class="pull-right">
         <% if time_now >= event.start and time_now <= event_end %>
           <%= link_to 'CHECK IN!', event %>, <%= ((event_end - time_now ) / 1.minutes).round %> minutes left

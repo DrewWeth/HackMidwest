@@ -18,7 +18,7 @@ Rails.application.routes.draw do
   # Groups
   get  'groups/leave/:id', to: 'groups#leave'
   post 'groups/join', to: 'groups#join'
-  get  'groups/:id/alert', to: 'groups#alert'
+  get  'home/alert', to: 'home#alert'
 
   # Confirmation
   match 'checkIn' => 'events#checkIn', :as => 'checkIn', via: [:get, :post]

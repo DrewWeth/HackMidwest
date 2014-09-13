@@ -76,7 +76,7 @@
               <td><%= link_to event.name, event %></td>
               <td><%= event.desc %></td>
               <td>
-                <% if  ( event.start + event.end * 1.hours ).past? %>
+                <% if  ( event.start + event.duration * 1.hours ).past? %>
                 <label class="label label-danger">
                   <% else %>
                   <label class="label label-success">
@@ -85,7 +85,7 @@
 
                   </label>
                 </td>
-                <td><%= event.end %> hour<% if event.end != 1 %>s<% end %></td>
+                <td><%= event.duration %> hour<% if event.duration != 1 %>s<% end %></td>
                 <td>
                   <% if event.address != nil and event.address .to_s != '' %>
                   <%= event.address %>

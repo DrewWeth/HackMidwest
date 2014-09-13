@@ -28,7 +28,7 @@
             start
           </td>
           <td> 
-            <%= @local_time.strftime("%B %d, %Y at %I:%M %p") %>
+			<%= Time.strptime(@event.start.to_s, '%M %S').in_time_zone(@zone.name) %>
           </td>
         </tr>
         <tr>
@@ -36,7 +36,7 @@
             duration 
           </td>
           <td>
-            <%= (@event.end * 1.minutes).round %> minutes
+            <%= (@event.duration * 1.minutes).round %> minutes
           </td>
         </tr>
         <tr>
