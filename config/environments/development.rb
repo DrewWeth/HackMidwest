@@ -14,7 +14,7 @@ Rails.application.configure do
   config.action_controller.perform_caching = false
 
 
-  config.action_mailer.default_url_options = { host: 'http://hack-midwest-app.herokuapp.com' }
+  config.action_mailer.default_url_options = { host: 'http://unifyco.herokuapp.com/' }
 
   # Don't care if the mailer can't send.
   config.action_mailer.raise_delivery_errors = false
@@ -34,6 +34,20 @@ Rails.application.configure do
   # Checks for improperly declared sprockets dependencies.
   # Raises helpful error messages.
   config.assets.raise_runtime_errors = true
+
+
+  #don't send emails in development
+  config.action_mailer.perform_deliveries = true
+  config.action_mailer.delivery_method = :smtp
+  config.action_mailer.smtp_settings = {
+      :address              => "smtp.gmail.com",
+      :port                 => 587,
+      :user_name            => 'dgwetherington',
+      :password             => '8805381abc',
+      :authentication       => 'plain',
+      :enable_starttls_auto => true  }
+   config.mailer_sender = "dgwetherington@gmail.com"
+
 
   # Raises error for missing translations
   # config.action_view.raise_on_missing_translations = true

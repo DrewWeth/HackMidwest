@@ -7,7 +7,25 @@
 	<%= csrf_meta_tags %>
 	<script src="//cdnjs.cloudflare.com/ajax/libs/trianglify/0.1.3/trianglify.min.js"></script>
 	<script src="http://d3js.org/d3.v3.min.js"></script>
-	<link rel="shortcut icon" href="<%=asset_path "images/heart.ico"%>">
+	<link rel="shortcut icon" href="<%=asset_path "heart.png"%>">
+
+	<style type="text/css">
+	      html, body, #map-canvas { height: 100; margin: 0; padding: 0;}
+	    </style>
+	    <script type="text/javascript"
+	      src="https://maps.googleapis.com/maps/api/js">
+	    </script>
+	    <script type="text/javascript">
+	      function initialize() {
+	        var mapOptions = {
+	          center: { lat: -34.397, lng: 150.644},
+	          zoom: 8
+	        };
+	        var map = new google.maps.Map(document.getElementById('map-canvas'),
+	            mapOptions);
+	      }
+	      google.maps.event.addDomListener(window, 'load', initialize);
+	    </script>
 
 </head>
 <body style="font-weight:200">
@@ -37,7 +55,7 @@
 					<li><%= link_to number_to_phone(current_user.phone_num, delimiter: ".", country_code: current_user.country), edit_user_registration_path %></li>
 					<li><%= link_to '/logout', destroy_user_session_path, :method => :delete %></li>
 					<% else %>
-					<li><%= link_to 'sign in', new_user_session_path %></li>
+					<li><%= link_to '/sign in', new_user_session_path %></li>
 					<% end %>
 					
 				</ul>
@@ -45,10 +63,10 @@
 		</div><!-- /.container-fluid -->
 	</nav>
 
-	<div class="container">
+	<div class="container" style="height:100%;width:100%">
 
 
-		<div class="well" style="opacity:.87">
+		<div class="well" style="opacity:.87" style="height:100%">
 			
 			<% if notice != nil %>
 			<div class="alert alert-info alert-dismissible" role="alert">

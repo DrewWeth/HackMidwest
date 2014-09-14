@@ -14,7 +14,9 @@ class ConfirmationsController < ApplicationController
 
   # GET /confirmations/new
   def new
-    @confirmation = Confirmation.new
+    if current_user == nil
+      redirect_to request.referer
+    end
   end
 
   # GET /confirmations/1/edit
@@ -24,36 +26,37 @@ class ConfirmationsController < ApplicationController
   # POST /confirmations
   # POST /confirmations.json
   def create
+    redirect_to request.referer
+  end
 
-    @confirmation = Confirmation.new(confirmation_params)
 
-    @user_lat_lng = cookies[:user_lat_long].split("|")
-    puts "LOOOOOK AT MEEEE!!!"
-    puts @user_lat_lng
+  def checkin
+    event = Event.find(params[:id])
 
-    #puts @confirmation.event_id
-
-    e = Event.find(@confirmation.event_id)
-    #puts e.address
-
-    distance = e.distance_to(@user_lat_lng)
+    distance = event.distance_to([params[:latitude], params[:longitude]])
     puts distance
 
+    @confirmation = Confirmation.new
+
     if ( distance < 0.5 )
-      flash[:message] = "You have successfully checked in!"
+      @confirmation.event_id = params[:id]
+      @confirmation.user_id = current_user.id
+
+
       respond_to do |format|
         if @confirmation.save
-          format.html { redirect_to "/events/" << @confirmation.event_id.to_s }
+          message = "checkin successful. distance: " << distance.round(1).to_s << " miles"
+          format.html { redirect_to event, notice: message }
           format.json { render :show, status: :created, location: @confirmation }
         else
           format.html { render :new }
           format.json { render json: @confirmation.errors, status: :unprocessable_entity }
         end
       end
-    else 
-      flash[:message] = "You are too far to check in! Distance:" << distance.to_s << " miles"
+    else
+      message = "you are too far to check in! distance: " << distance.to_s << " miles. Lat: " + params[:latitude] + ". Long: " + params[:longitude]
       respond_to do |format|
-        format.html { render :new }
+        format.html { redirect_to event, notice: message }
         format.json { render json: @confirmation.errors, status: :unprocessable_entity }
       end
     end
@@ -93,4 +96,4 @@ class ConfirmationsController < ApplicationController
     def confirmation_params
       params.require(:confirmation).permit(:user_id, :event_id)
     end
-end
+  end

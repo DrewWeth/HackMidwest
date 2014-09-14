@@ -54,7 +54,6 @@ class GroupsController < ApplicationController
             @group.member_count += 1
             @group.save
 
-
             format.html { redirect_to @group, notice: 'you were added to the group!' }
             format.json { render :show, status: :ok, location: @group }
           else

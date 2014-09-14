@@ -1,34 +1,38 @@
 
-<div id="status"></div>
+<div id="demo"></div>
+<h1>check in</h1>
 
-<style type="text/css">
-      #map-canvas { height: 100% }
-    </style>
-<h1>
-	<%= if params[:event_id].present?
-			e = Event.find(params[:event_id])
-			e[:name]
-		end
-	%>	<small>check in</small>
-</h1>
+<form action="/confirmations" id="create_form" class="form-inline" method="post">
+	<%= token_tag %>
 
-<% if params[:event_id].present?
-		#puts "************************** EVENT ID "<< params[:event_id].to_s
-		e = Event.find(params[:event_id])
-		cookies['event_lat_long'] = {
-		  :value => e.latitude.to_s << "|" << e.longitude.to_s
-		}
-	end %>
+	<input id="event_id" name="event_id" type="hidden" value="<%= params[:event_id] %>">
+	<input id="latitude" name="latitude" type="hidden">
+	<input id="longitude" name="longitude" type="hidden">
 
-<% if flash[:message] %>
-    <div style="color:red" class="notice"><%= flash[:message] %></div>
-<% end %>
+	<div class="form-group">
 
-<%= render 'form' %>
+		<button class="btn btn-primary" onclick="getLocation()">check in</button>
+	</div>
+</form>
+
 
 <%= link_to 'Back', confirmations_path %>
 
-<%- unless @user_lat_lng %>
-<div id="map-canvas"/>
+<script>
+	var x = document.getElementById("demo");
+	function getLocation() {
+		if (navigator.geolocation) {
+			navigator.geolocation.getCurrentPosition(showPosition);
+		} else {
+			x.innerHTML = "Geolocation is not supported by this browser.";
+		}
+	}
+	function showPosition(position) {
+		$('#latitude').val(position.coords.latitude );
+		$('#longitude').val(position.coords.longitude );
 
-<%- end %>
+		x.innerHTML = "Latitude: " + position.coords.latitude + 
+		"<br>Longitude: " + position.coords.longitude;
+		$('create_form').submit();
+	}
+</script>

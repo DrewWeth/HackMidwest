@@ -43,12 +43,11 @@ class HomeController < ApplicationController
 			    list_of_nums = the_group.users.where(restriction_level: 0)
 			    
 			    list_of_nums.each do |l|
-			      mob_num = "+1" + l.phone_num.to_s
+			      mob_num = "+" + l.country.to_s + l.phone_num.to_s
 			       @client.account.messages.create(
 			         :from => '+13147363270',
 			         :to => mob_num,
 			         :body => u.body )
-			      
 			      u.is_sent = true
 			      u.save
 		    	end

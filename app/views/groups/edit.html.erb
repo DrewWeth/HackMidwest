@@ -1,61 +1,63 @@
-<h1>edit group</h1>
+<h1>edit group <small><%= @group.name %></small><div id="destroy" class="in-line pull-right" style="display:none">
+  <%= button_to 'destroy group', @group, method: :delete, :class => "btn btn-sm btn-danger pull-right", data: { confirm: "Are you sure?! This cannot be undone." } %></div>
+</h1>
 
 <div id="normal">
-<%= render 'form' %>
+  <%= render 'form' %>
+  <hr>
+  <%= form_for(@group) do |f| %>
+  <% if @group.errors.any? %>
+  <div id="error_explanation">
+    <h2><%= pluralize(@group.errors.count, "error") %> prohibited this group from being saved:</h2>
+
+    <ul>
+      <% @group.errors.full_messages.each do |message| %>
+      <li><%= message %></li>
+      <% end %>
+    </ul>
+  </div>
+  <% end %>
 </div>
-<%= link_to 'show', @group %> |
-<%= link_to 'back', groups_path %> |
-<a id="more_action">more settings</a>
 
 <div id="more_content" style="display:none">
-<hr>
-<%= form_for(@group) do |f| %>
-  <% if @group.errors.any? %>
-    <div id="error_explanation">
-      <h2><%= pluralize(@group.errors.count, "error") %> prohibited this group from being saved:</h2>
+  <h3>member management <span class="badge"><%= @members.count %></span></h3>
+  <table class="table table-hover">
+    <% @members.each do |m| %>
+    <tr>
+      <td>
+        <%= link_to m.email, m %>
+      </td>
+      <td>
+        <%= link_to(:controller => "groups", :action => "leave", :id => params[:id]) do %>
 
-      <ul>
-      <% @group.errors.full_messages.each do |message| %>
-        <li><%= message %></li>
-      <% end %>
-      </ul>
-    </div>
+        <span class="glyphicon glyphicon-trash"></span>
+        <% end %>
+      </td>
+    </tr>
+
+    <% end %>
+  </table>
   <% end %>
   
-  
-  <h3>member management <span class="badge"><%= @members.count %></span></h3>
-    <table class="table table-hover">
-      <% @members.each do |m| %>
-      <tr>
-        <td>
-          <%= link_to m.email, m %>
-        </td>
-        <td>
-          <%= link_to(:controller => "groups", :action => "leave", :id => params[:id]) do %>
-
-          <span class="glyphicon glyphicon-trash"></span>
-          <% end %>
-        </td>
-      </tr>
-      
-      <% end %>
-    </table>
-  
-  <div class="actions">
-    <%= f.submit 'save', :class => "btn btn-primary form-control" %>
-  </div>
-<% end %>
-<div class="field">
-  <%= button_to 'destroy group', @group, method: :delete, :class => "btn btn-sm btn-danger pull-right", data: { confirm: "Are you sure?! This cannot be undone." } %>
-  </div>
 </div>
+
+<%= link_to 'show', @group %> |
+<%= link_to 'back', groups_path %> |
+
+<a id="more_action">more settings</a>
+
 
 <script type="text/javascript">
 	$('#more_action').click(function()
 	{
-		$('#more_content').toggle('fast');
-		$('#normal').toggle('fast');
+    if ($('#more_action').html() == 'more settings')
+      $('#more_action').html('less settings');
+    else
+      $('#more_action').html('more settings');
 
-	});
+    $('#normal').toggle('fast');
+    $('#more_content').toggle('fast');
+    $('#destroy').toggle('fast');
+  });
 
 </script>

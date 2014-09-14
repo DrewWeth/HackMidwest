@@ -130,7 +130,7 @@ class EventsController < ApplicationController
             arr_alerts = [0] # Alerts are in hours away
           end
           # has to be after event.save to be assigned a PK
-          url_string = root_url + "confirmations/new?user_id=" + current_user.id.to_s + "&event_id=" + @event.id.to_s
+          url_string = root_url + "events/" + @event.id.to_s
 
           # Dev notes
           # ---------
