@@ -8,7 +8,7 @@
 </div>
 <div class="row">
  <div class="col-sm-6">
-  <h2>registration, woohoo!</h2>
+  <h2>make an account. it's easy</h2>
 
   <%= form_for(resource, as: resource_name, url: registration_path(resource_name)) do |f| %>
   <%= devise_error_messages! %>
@@ -31,26 +31,43 @@
         <% end %>
 
         <br>
-        <p>* <%= BRAND_NAME %> service only works for US numbers with texting capabilities</p>
+        <p>* <%= BRAND_NAME %>'s service only works for devices with texting capabilities.</p>
 
 
 
       </div>
       <div class="col-sm-6">
-      
-      
-        <h2>maps or demos</h2>
-        Google maps of our users (cache this data once in a while)
-        <br>
-        <br>
-        Or, we could put pretty iphone demos. Sometimes maps doesn't load. Bad first impression
+        <h2>examples</h2>
+        <div class="col-sm-6">
+          <img id="i1" src="<%= asset_path "IMG_1911.png" %>" class="img-responsive" alt="Responsive image">
+          <div class="contenthover">
+              <h3>get updates about meetings</h3>
+              <p>never have a bad turnout because of miscommunication!</p>
+          </div>
+          </div>
+                  <div class="col-sm-6">
 
+        <img id="i2" src="<%= asset_path "IMG_1912.png" %>" class="img-responsive" alt="Responsive image">
+        <div class="contenthover">
+              <h3>use gps to see who attended meetings</h3>
+              <p>attendance sheets are a thing of the past. get a list of who was attendees instantly!</p>
+          </div>
+</div>
       </div>
 
     </div>
 
 
-
+<script>
+$('#i1').contenthover({
+    overlay_background:'#000',
+    overlay_opacity:0.8
+});
+$('#i2').contenthover({
+    overlay_background:'#000',
+    overlay_opacity:0.8
+});
+</script>
 <script>
   $(document).ready(function(){
    $('#full-header').css({"background-color":Please.make_color()});

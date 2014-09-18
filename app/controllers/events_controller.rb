@@ -142,7 +142,7 @@ class EventsController < ApplicationController
           alert = Alert.new
           alert.event_id = @event.id
           alert.send_datetime = Time.now
-          alert.body = group_for_event.name + "'s event, " + @event.name + ", is on " + @event.start.strftime("%B %d, %Y at %I:%M %p")
+          alert.body = group_for_event.name + "'s event, " + @event.name + ", is on " + @event.start.in_time_zone(zone).strftime("%B %d, %Y at %I:%M %p")
           alert.save
 
           # 'temporal alerts'
@@ -150,7 +150,7 @@ class EventsController < ApplicationController
             alert = Alert.new
             alert.event_id = @event.id
 
-            alert.send_datetime = @event.start.in_time_zone - a.hours # set time from start to do send
+            alert.send_datetime = @event.start - a.hours # set time from start to do send
 
             if a == 0
               alert.is_event_start = true
