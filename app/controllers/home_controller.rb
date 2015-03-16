@@ -1,10 +1,10 @@
 class HomeController < ApplicationController
 	def index
 		@users = User.all.count
-		@groups = Group.all.count	
+		@groups = Group.all.count
 		@events = Event.all.count
 		@alerts = Alert.all.count
-		
+
 		@server_time = Time.zone.now
 
 		@in_time_zone = Time.zone.now.in_time_zone('Eastern Time (US & Canada)')
@@ -25,7 +25,7 @@ class HomeController < ApplicationController
 		require 'twilio-ruby'
 		puts "Twilio authentication"
 		account_sid = 'AC29e7b96239c5f0bfc6ab8b724e263f30'
-		auth_token = 'e9befab8a2ea884e92db21709fe073e1'
+		auth_token = '77d93608f97102a6011bb3fd90229a85'
 
 		begin
 			@client = Twilio::REST::Client.new account_sid, auth_token
@@ -39,9 +39,9 @@ class HomeController < ApplicationController
 			    the_event.save
 
 			    the_group = Group.find(the_event.group_id)
-			    
+
 			    list_of_nums = the_group.users.where(restriction_level: 0)
-			    
+
 			    list_of_nums.each do |l|
 			      mob_num = "+" + l.country.to_s + l.phone_num.to_s
 			       @client.account.messages.create(
